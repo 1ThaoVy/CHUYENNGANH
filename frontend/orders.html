@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của tôi - Orianna Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="text-2xl font-bold text-primary">Orianna Shop</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-primary">Trang chủ</a>
+                    <a href="products.html" class="text-gray-700 hover:text-primary">Sản phẩm</a>
+                    <a href="about.html" class="text-gray-700 hover:text-primary">Giới thiệu</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-primary">Liên hệ</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="cart.html" class="relative">
+                        <svg class="w-6 h-6 text-gray-700 hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
+                    <div id="user-menu" class="hidden">
+                        <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
+                        <span id="user-name" class="text-gray-700 ml-4"></span>
+                        <button onclick="logout()" class="text-red-600 hover:text-red-700 ml-4">Đăng xuất</button>
+                    </div>
+                    <div id="guest-menu" class="flex space-x-2">
+                        <a href="login.html" class="text-gray-700 hover:text-primary">Đăng nhập</a>
+                        <span class="text-gray-400">|</span>
+                        <a href="register.html" class="text-gray-700 hover:text-primary">Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <h1 class="text-3xl font-bold mb-8">Đơn hàng của tôi</h1>
+
+        <div id="loading" class="text-center py-12">Đang tải...</div>
+        
+        <div id="no-orders" class="hidden text-center py-12">
+            <p class="text-gray-600 mb-4">Bạn chưa có đơn hàng nào</p>
+            <a href="products.html" class="inline-block bg-primary hover:bg-cyan-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                Mua sắm ngay
+            </a>
+        </div>
+
+        <div id="orders-list" class="space-y-4"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400">
+            <p>&copy; 2024 Orianna Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        if (!requireAuth()) {
+            // Will redirect to login
+        }
+
+        async function loadOrders() {
+            try {
+                const data = await apiCall('/orders/my-orders');
+                const loading = document.getElementById('loading');
+                const noOrders = document.getElementById('no-orders');
+                const ordersList = document.getElementById('orders-list');
+
+                loading.classList.add('hidden');
+
+                if (data.data.length === 0) {
+                    noOrders.classList.remove('hidden');
+                    return;
+                }
+
+                ordersList.innerHTML = data.data.map(order => `
+                    <a href="order-detail.html?id=${order.don_hang_id}" 
+                       class="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg">Đơn hàng #${order.don_hang_id}</h3>
+                                <p class="text-sm text-gray-600">${formatDate(order.ngay_dat_hang)}</p>
+                            </div>
+                            <span class="px-4 py-1 rounded-full text-sm font-semibold"
+                                  style="background-color: ${order.ma_mau_sac}20; color: ${order.ma_mau_sac}">
+                                ${order.ten_trang_thai}
+                            </span>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm text-gray-600">Người nhận: ${order.ten_nguoi_nhan}</p>
+                                    <p class="text-sm text-gray-600">SĐT: ${order.sdt_nguoi_nhan}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">Tổng tiền</p>
+                                    <p class="text-xl font-bold text-primary">${formatCurrency(order.tong_tien)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            } catch (error) {
+                document.getElementById('loading').innerHTML = '<p class="text-red-600">Có lỗi xảy ra</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orianna Shop - Nước Hoa Chính Hãng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#06B6D4',
+                        secondary: '#0EA5E9',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="text-2xl font-bold text-primary">Orianna Shop</a>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-primary">Trang chủ</a>
+                    <a href="products.html" class="text-gray-700 hover:text-primary">Sản phẩm</a>
+                    <a href="about.html" class="text-gray-700 hover:text-primary">Giới thiệu</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-primary">Liên hệ</a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <a href="cart.html" class="relative">
+                        <svg class="w-6 h-6 text-gray-700 hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
+
+                    <div id="user-menu" class="hidden">
+                        <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
+                        <span id="user-name" class="text-gray-700 ml-4"></span>
+                        <button onclick="logout()" class="text-red-600 hover:text-red-700 ml-4">Đăng xuất</button>
+                    </div>
+
+                    <div id="guest-menu" class="flex space-x-2">
+                        <a href="login.html" class="text-gray-700 hover:text-primary">Đăng nhập</a>
+                        <span class="text-gray-400">|</span>
+                        <a href="register.html" class="text-gray-700 hover:text-primary">Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Slideshow -->
+    <section class="relative overflow-hidden">
+        <div id="slideshow" class="relative">
+            <!-- Slide 1 -->
+            <div class="slide transition-opacity duration-1000">
+                <img src="http://localhost:3001/images/banner 1.png?v=3" alt="Banner 1" class="w-full h-auto block" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="slide absolute inset-0 transition-opacity duration-1000 opacity-0">
+                <img src="http://localhost:3001/images/banner 2.png?v=3" alt="Banner 2" class="w-full h-auto block" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
+            </div>
+
+            <!-- Navigation Arrows -->
+            <button onclick="changeSlide(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 text-gray-800 p-3 rounded-full transition shadow-lg z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <button onclick="changeSlide(1)" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 text-gray-800 p-3 rounded-full transition shadow-lg z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+
+            <!-- Dots Indicator -->
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+                <button onclick="goToSlide(0)" class="dot w-3 h-3 rounded-full bg-white shadow-lg transition"></button>
+                <button onclick="goToSlide(1)" class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 shadow-lg transition"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-8">Thương hiệu nổi bật</h2>
+        <div id="categories" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <!-- Categories will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="container mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-center mb-8">Sản phẩm nổi bật</h2>
+        <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Products will be loaded here -->
+        </div>
+        <div class="text-center mt-8">
+            <a href="products.html" class="inline-block bg-primary hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+                Xem tất cả sản phẩm
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400">
+            <p>&copy; 2024 Orianna Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/home.js"></script>
+    <script>
+        // Slideshow functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        let slideInterval;
+
+        function showSlide(index) {
+            // Wrap around
+            if (index >= slides.length) currentSlide = 0;
+            else if (index < 0) currentSlide = slides.length - 1;
+            else currentSlide = index;
+
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.style.opacity = '0';
+            });
+
+            // Show current slide
+            slides[currentSlide].style.opacity = '1';
+
+            // Update dots
+            dots.forEach((dot, i) => {
+                if (i === currentSlide) {
+                    dot.classList.remove('bg-opacity-50');
+                    dot.classList.add('bg-white');
+                } else {
+                    dot.classList.add('bg-opacity-50');
+                    dot.classList.remove('bg-white');
+                }
+            });
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+            resetInterval();
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+            resetInterval();
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 5000);
+        }
+
+        // Auto play slideshow every 5 seconds
+        slideInterval = setInterval(() => {
+            showSlide(currentSlide + 1);
+        }, 5000);
+
+        // Show first slide
+        showSlide(0);
+    </script>
+</body>
+</html>

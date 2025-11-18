@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - Orianna Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="text-2xl font-bold text-primary">Orianna Shop</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-primary">Trang chủ</a>
+                    <a href="products.html" class="text-gray-700 hover:text-primary">Sản phẩm</a>
+                    <a href="about.html" class="text-gray-700 hover:text-primary">Giới thiệu</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-primary">Liên hệ</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="cart.html" class="relative">
+                        <svg class="w-6 h-6 text-gray-700 hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
+                    <div id="user-menu" class="hidden">
+                        <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
+                        <span id="user-name" class="text-gray-700 ml-4"></span>
+                        <button onclick="logout()" class="text-red-600 hover:text-red-700 ml-4">Đăng xuất</button>
+                    </div>
+                    <div id="guest-menu" class="flex space-x-2">
+                        <a href="login.html" class="text-gray-700 hover:text-primary">Đăng nhập</a>
+                        <span class="text-gray-400">|</span>
+                        <a href="register.html" class="text-gray-700 hover:text-primary">Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <div id="loading" class="text-center py-12">Đang tải...</div>
+        <div id="product-detail" class="hidden"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400">
+            <p>&copy; 2024 Orianna Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        const productId = new URLSearchParams(window.location.search).get('id');
+        let currentProduct = null;
+        let quantity = 1;
+
+        async function loadProduct() {
+            try {
+                const data = await apiCall(`/products/${productId}`);
+                currentProduct = data.data;
+                displayProduct(currentProduct);
+            } catch (error) {
+                document.getElementById('loading').innerHTML = '<p class="text-red-600">Không tìm thấy sản phẩm</p>';
+            }
+        }
+
+        function displayProduct(product) {
+            document.getElementById('loading').classList.add('hidden');
+            const container = document.getElementById('product-detail');
+            container.classList.remove('hidden');
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow-md">
+                        <div class="h-96 bg-gray-200 flex items-center justify-center">
+                            <span class="text-gray-400 text-xl">Hình ảnh sản phẩm</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h1 class="text-3xl font-bold mb-4">${product.ten_san_pham}</h1>
+                        <p class="text-gray-600 mb-4">Thương hiệu: <span class="font-semibold">${product.ten_danh_muc}</span></p>
+                        
+                        <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                            <div class="text-3xl font-bold text-primary mb-2">${formatCurrency(product.gia_ban)}</div>
+                            <p class="text-gray-600">Dung tích: ${product.dung_tich}</p>
+                            <p class="text-gray-600">Còn lại: ${product.so_luong_ton} sản phẩm</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-2">Số lượng:</label>
+                            <div class="flex items-center space-x-4">
+                                <button onclick="changeQuantity(-1)" class="w-10 h-10 bg-gray-200 rounded hover:bg-gray-300">-</button>
+                                <input type="number" id="quantity" value="1" min="1" max="${product.so_luong_ton}"
+                                       class="w-20 text-center px-4 py-2 border border-gray-300 rounded-lg">
+                                <button onclick="changeQuantity(1)" class="w-10 h-10 bg-gray-200 rounded hover:bg-gray-300">+</button>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 mb-8">
+                            <button onclick="handleAddToCart()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition">
+                                Thêm vào giỏ
+                            </button>
+                            <button onclick="handleBuyNow()" class="flex-1 bg-primary hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+                                Mua ngay
+                            </button>
+                        </div>
+
+                        <div class="border-t pt-6">
+                            <h2 class="text-xl font-semibold mb-4">Mô tả sản phẩm</h2>
+                            <p class="text-gray-700 whitespace-pre-line">${product.mo_ta}</p>
+                        </div>
+
+                        ${product.reviews && product.reviews.length > 0 ? `
+                            <div class="border-t pt-6 mt-6">
+                                <h2 class="text-xl font-semibold mb-4">Đánh giá (${product.reviews.length})</h2>
+                                <div class="space-y-4">
+                                    ${product.reviews.map(review => `
+                                        <div class="bg-gray-50 p-4 rounded">
+                                            <div class="flex items-center mb-2">
+                                                <span class="font-semibold mr-2">${review.ho_ten}</span>
+                                                <span class="text-yellow-500">${'⭐'.repeat(review.xep_hang)}</span>
+                                            </div>
+                                            <p class="text-gray-700">${review.binh_luan}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity');
+            const newValue = parseInt(input.value) + delta;
+            if (newValue >= 1 && newValue <= currentProduct.so_luong_ton) {
+                input.value = newValue;
+                quantity = newValue;
+            }
+        }
+
+        function handleAddToCart() {
+            quantity = parseInt(document.getElementById('quantity').value);
+            addToCart(currentProduct, quantity);
+        }
+
+        function handleBuyNow() {
+            quantity = parseInt(document.getElementById('quantity').value);
+            addToCart(currentProduct, quantity);
+            window.location.href = 'cart.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProduct);
+    </script>
+</body>
+</html>
