@@ -17,6 +17,53 @@
             }
         }
     </script>
+    <style>
+        /* Custom brand fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@400;700&family=Roboto+Mono:wght@400&display=swap');
+        
+        /* Chanel - Elegant serif */
+        .brand-chanel {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            font-size: 1.5rem;
+        }
+        
+        /* Dior - Refined serif */
+        .brand-dior {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+        
+        /* Gucci - Bold serif */
+        .brand-gucci {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            font-size: 1.75rem;
+        }
+        
+        /* Le Labo - Modern mono */
+        .brand-lelabo {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+        }
+        
+        /* Calvin Klein - Clean sans */
+        .brand-calvinklein {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
     <!-- Navbar -->
@@ -33,6 +80,12 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
+                    <!-- Search Button -->
+                    <button onclick="toggleSearch()" class="text-gray-700 hover:text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
                     <a href="cart.html" class="relative">
                         <svg class="w-6 h-6 text-gray-700 hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -42,6 +95,7 @@
 
                     <div id="user-menu" class="hidden">
                         <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
+                        <a id="admin-link" href="admin/dashboard.html" class="hidden text-gray-700 hover:text-primary">Admin</a>
                         <span id="user-name" class="text-gray-700 ml-4"></span>
                         <button onclick="logout()" class="text-red-600 hover:text-red-700 ml-4">Đăng xuất</button>
                     </div>
@@ -99,13 +153,13 @@
 
     <!-- Featured Products -->
     <section class="container mx-auto px-4 py-12">
-        <h2 class="text-3xl font-bold text-center mb-8">Sản phẩm nổi bật</h2>
-        <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h2 class="text-3xl font-bold text-center mb-8">🔥 Sản phẩm giảm giá đặc biệt</h2>
+        <div id="products" class="grid grid-cols-1 gap-8">
             <!-- Products will be loaded here -->
         </div>
         <div class="text-center mt-8">
-            <a href="products.html" class="inline-block bg-primary hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition">
-                Xem tất cả sản phẩm
+            <a href="products.html?giam_gia=true" class="inline-block bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-8 rounded-lg transition">
+                Xem tất cả sản phẩm giảm giá
             </a>
         </div>
     </section>
@@ -121,6 +175,15 @@
     <script src="js/auth.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/home.js"></script>
+    <script>
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('search-input').value.trim();
+            if (searchTerm) {
+                window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+    </script>
     <script>
         // Slideshow functionality
         let currentSlide = 0;
