@@ -40,6 +40,8 @@ CREATE TABLE `san_pham` (
     `ten_san_pham` VARCHAR(255) NOT NULL COMMENT 'Tên nước hoa',
     `mo_ta` TEXT COMMENT 'Mô tả chi tiết sản phẩm',
     `gia_ban` DECIMAL(10, 2) NOT NULL COMMENT 'Đơn giá bán',
+    `gia_goc` DECIMAL(10, 2) COMMENT 'Giá gốc trước khi giảm',
+    `phan_tram_giam_gia` INT DEFAULT 0 COMMENT 'Phần trăm giảm giá (0-100)',
     `so_luong_ton` INT NOT NULL DEFAULT 0 COMMENT 'Số lượng tồn kho',
     `dung_tich` VARCHAR(50) COMMENT 'Dung tích/Phiên bản',
     `url_hinh_anh_chinh` VARCHAR(255) COMMENT 'Đường dẫn đến hình ảnh chính',
@@ -134,9 +136,11 @@ CREATE TABLE `lich_su_su_dung_ma_giam_gia` (
 -- Bảng 11: ALBUM_ANH (Quản lý Album Ảnh)
 CREATE TABLE `album_anh` (
     `album_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Album',
+    `san_pham_id` INT COMMENT 'ID Sản phẩm',
     `ten_album` VARCHAR(100) NOT NULL COMMENT 'Tên Album',
     `slug` VARCHAR(100) NOT NULL UNIQUE,
-    `mo_ta` TEXT COMMENT 'Mô tả mục đích của Album'
+    `mo_ta` TEXT COMMENT 'Mô tả mục đích của Album',
+    FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham`(`san_pham_id`)
 ) COMMENT='Quản lý các nhóm ảnh trên hệ thống';
 
 -- Bảng 12: CHI_TIET_ANH (Chi tiết Ảnh)
@@ -176,13 +180,13 @@ INSERT INTO `nguoi_dung` (`ho_ten`, `email`, `mat_khau_hash`, `so_dien_thoai`, `
 ('Khách Hàng Thân Thiết', 'khachhang@gmail.com', 'HASH_CUA_MAT_KHAU_KH', '0919998888', '456 Lê Lợi, Hà Nội', 'khach_hang');
 
 -- 4.4. Chèn dữ liệu vào SAN_PHAM (75 sản phẩm)
-INSERT INTO `san_pham` (`danh_muc_id`, `ten_san_pham`, `mo_ta`, `gia_ban`, `so_luong_ton`, `dung_tich`, `url_hinh_anh_chinh`) VALUES
--- Chanel (ID: 1)
-(1, 'Chanel N°5 Eau de Parfum', 'Hương thơm biểu tượng, cổ điển và sang trọng.', 4500000.00, 50, '100ml EDP', '/images/chanel_no5.jpg'),
-(1, 'Chanel Coco Mademoiselle', 'Hương hoa cỏ phương Đông, tươi mát và gợi cảm.', 4200000.00, 45, '100ml EDP', '/images/chanel_coco.jpg'),
-(1, 'Chanel Bleu de Chanel', 'Hương gỗ thơm, mạnh mẽ, nam tính và tinh tế.', 3800000.00, 60, '150ml EDP', '/images/chanel_bleu.jpg'),
-(1, 'Chanel Chance Eau Tendre', 'Hương hoa quả tươi tắn, nhẹ nhàng và nữ tính.', 3500000.00, 55, '50ml EDT', '/images/chanel_chance.jpg'),
-(1, 'Chanel Allure Homme Sport', 'Hương tươi mát, năng động và quyến rũ.', 3900000.00, 40, '100ml EDT', '/images/chanel_allure.jpg'),
+INSERT INTO `san_pham` (`danh_muc_id`, `ten_san_pham`, `mo_ta`, `gia_ban`, `gia_goc`, `phan_tram_giam`, `so_luong_ton`, `dung_tich`, `url_hinh_anh_chinh`) VALUES
+-- Chanel (ID: 1) - Một số sản phẩm giảm giá
+(1, 'Chanel N°5 Eau de Parfum', 'Hương thơm biểu tượng, cổ điển và sang trọng.', 3600000.00, 4500000.00, 20, 50, '100ml EDP', '/images/chanel_no5.jpg'),
+(1, 'Chanel Coco Mademoiselle', 'Hương hoa cỏ phương Đông, tươi mát và gợi cảm.', 3360000.00, 4200000.00, 20, 45, '100ml EDP', '/images/chanel_coco.jpg'),
+(1, 'Chanel Bleu de Chanel', 'Hương gỗ thơm, mạnh mẽ, nam tính và tinh tế.', 3800000.00, NULL, 0, 60, '150ml EDP', '/images/chanel_bleu.jpg'),
+(1, 'Chanel Chance Eau Tendre', 'Hương hoa quả tươi tắn, nhẹ nhàng và nữ tính.', 2800000.00, 3500000.00, 20, 55, '50ml EDT', '/images/chanel_chance.jpg'),
+(1, 'Chanel Allure Homme Sport', 'Hương tươi mát, năng động và quyến rũ.', 3900000.00, NULL, 0, 40, '100ml EDT', '/images/chanel_allure.jpg'),
 (1, 'Chanel Gabrielle Essence', 'Hương hoa trắng rạng rỡ và lấp lánh.', 4300000.00, 35, '50ml EDP', '/images/chanel_gabrielle.jpg'),
 (1, 'Chanel Paris-Biarritz', 'Hương thơm tươi mới, cảm hứng từ bờ biển.', 3100000.00, 30, '125ml EDT', '/images/chanel_biarritz.jpg'),
 (1, 'Chanel Platinum Egoiste', 'Hương thơm dương xỉ và gỗ, thanh lịch.', 3600000.00, 25, '75ml EDT', '/images/chanel_egoiste.jpg'),
@@ -198,8 +202,8 @@ INSERT INTO `san_pham` (`danh_muc_id`, `ten_san_pham`, `mo_ta`, `gia_ban`, `so_l
 (2, 'Dior Sauvage Eau de Parfum', 'Hương cam chanh và ambroxan, nam tính và hoang dã.', 3600000.00, 70, '100ml EDP', '/images/dior_sauvage.jpg'),
 (2, 'Miss Dior Blooming Bouquet', 'Hương hoa cỏ nhẹ nhàng, tinh tế và lãng mạn.', 3300000.00, 65, '50ml EDT', '/images/dior_missdior.jpg'),
 (2, 'Dior Homme Intense', 'Hương hoa diên vĩ (Iris) và gỗ, ấm áp và quyến rũ.', 4000000.00, 50, '100ml EDP', '/images/dior_homme.jpg'),
-(2, 'Jadore Eau de Parfum', 'Hương hoa trắng lộng lẫy, nữ tính và sang trọng.', 3700000.00, 48, '75ml EDP', '/images/dior_jadore.jpg'),
-(2, 'Dior Fève Délicieuse', 'Hương đậu Tonka, vani và hổ phách, ngọt ngào và ấm cúng.', 5500000.00, 20, '125ml EDP', '/images/dior_feve.jpg'),
+(2, 'Jadore Eau de Parfum', 'Hương hoa trắng lộng lẫy, nữ tính và sang trọng.', 2960000.00, 3700000.00, 20, 48, '75ml EDP', '/images/dior_jadore.jpg'),
+(2, 'Dior Fève Délicieuse', 'Hương đậu Tonka, vani và hổ phách, ngọt ngào và ấm cúng.', 5500000.00, NULL, 0, 20, '125ml EDP', '/images/dior_feve.jpg'),
 (2, 'Dior Hypnotic Poison', 'Hương hạnh nhân, vani, bí ẩn và cực kỳ gợi cảm.', 3400000.00, 38, '50ml EDT', '/images/dior_poison.jpg'),
 (2, 'Dior Cologne Royale', 'Hương cam chanh, tươi mát và quý tộc.', 4500000.00, 25, '125ml Cologne', '/images/dior_cologne.jpg'),
 (2, 'Dior Spice Blend', 'Hương gia vị ấm áp, mạnh mẽ và độc đáo.', 5200000.00, 15, '75ml EDP', '/images/dior_spice.jpg'),
@@ -215,8 +219,8 @@ INSERT INTO `san_pham` (`danh_muc_id`, `ten_san_pham`, `mo_ta`, `gia_ban`, `so_l
 (3, 'Le Labo Santal 33', 'Hương gỗ đàn hương, bạch đậu khấu, khói và da thuộc.', 4800000.00, 80, '100ml EDP', '/images/lelabo_santal33.jpg'),
 (3, 'Le Labo Rose 31', 'Hương hoa hồng, gỗ tuyết tùng và thì là, unisex độc đáo.', 4600000.00, 75, '50ml EDP', '/images/lelabo_rose31.jpg'),
 (3, 'Le Labo Another 13', 'Hương ambroxan, xạ hương, sạch sẽ và gây nghiện.', 4900000.00, 60, '100ml EDP', '/images/lelabo_another13.jpg'),
-(3, 'Le Labo Bergamote 22', 'Hương cam bergamot, bưởi, tươi mát và sống động.', 4500000.00, 55, '50ml EDP', '/images/lelabo_bergamote.jpg'),
-(3, 'Le Labo Thé Noir 29', 'Hương trà đen, lá sung và thuốc lá khô.', 4700000.00, 50, '100ml EDP', '/images/lelabo_thenoir.jpg'),
+(3, 'Le Labo Bergamote 22', 'Hương cam bergamot, bưởi, tươi mát và sống động.', 3600000.00, 4500000.00, 20, 55, '50ml EDP', '/images/lelabo_bergamote.jpg'),
+(3, 'Le Labo Thé Noir 29', 'Hương trà đen, lá sung và thuốc lá khô.', 4700000.00, NULL, 0, 50, '100ml EDP', '/images/lelabo_thenoir.jpg'),
 (3, 'Le Labo Vetiver 46', 'Hương cỏ vetiver, gỗ tuyết tùng và gia vị.', 4400000.00, 40, '50ml EDP', '/images/lelabo_vetiver46.jpg'),
 (3, 'Le Labo Patchouli 24', 'Hương hoắc hương, khói và vani, bí ẩn.', 5100000.00, 30, '100ml EDP', '/images/lelabo_patchouli24.jpg'),
 (3, 'Le Labo Lys 41', 'Hương hoa huệ, hoa nhài và vani, nữ tính.', 4600000.00, 35, '50ml EDP', '/images/lelabo_lys41.jpg'),
@@ -262,5 +266,66 @@ INSERT INTO `san_pham` (`danh_muc_id`, `ten_san_pham`, `mo_ta`, `gia_ban`, `so_l
 (5, 'Gucci Guilty Black Pour Homme', 'Hương Lavender và hoắc hương, mãnh liệt.', 3150000.00, 42, '90ml EDT', '/images/gucci_blackm.jpg'),
 (5, 'Gucci Guilty Absolute Pour Homme', 'Hương da thuộc và gỗ, hiện đại và khô ráo.', 3800000.00, 15, '50ml EDP', '/images/gucci_absolute.jpg');
 
+-- 4.5 ma giam gia
+INSERT INTO `ma_giam_gia` (`ma_giam_gia_id`, `ma_code`, `loai_giam_gia`, `gia_tri`, `ap_dung_toi_thieu`, `so_luong_con_lai`, `ngay_bat_dau`, `ngay_ket_thuc`, `trang_thai`)
+VALUES
+(1, 'ORI10', 'phan_tram', 10.00, 500000.00, 100, '2025-01-01 00:00:00', '2026-01-01 00:00:00', 'active'),
+(2, 'FREE50K', 'tien_mat', 50000.00, 200000.00, 50, '2025-06-01 00:00:00', '2025-12-31 23:59:59', 'active'),
+(3, 'WELCOME5', 'phan_tram', 5.00, 0.00, NULL, '2025-01-01 00:00:00', NULL, 'active');
+
+-- 4.6 ĐƠN HÀNG (gán don_hang_id cố định để dễ tham chiếu)
+INSERT INTO `don_hang` (`don_hang_id`, `nguoi_dung_id`, `trang_thai_don_hang_id`, `ngay_dat_hang`, `ten_nguoi_nhan`, `sdt_nguoi_nhan`, `dia_chi_giao_hang`, `tong_tien`, `phuong_thuc_thanh_toan`)
+VALUES
+(1, 2, 1, '2025-11-15 10:12:00', 'Nguyễn Văn A', '0919998888', '456 Lê Lợi, Hà Nội', 4500000.00, 'COD'),
+(2, NULL, 3, '2025-11-16 14:30:00', 'Khách vãng lai', '0987654321', '789 Trần Hưng Đạo, Đà Nẵng', 7600000.00, 'COD'),
+(3, 2, 4, '2025-11-17 09:00:00', 'Khách Hàng Thân Thiết', '0919998888', '456 Lê Lợi, Hà Nội', 3510000.00, 'Thanh toán Online');
+
+-- 4.7 CHI TIẾT ĐƠN HÀNG (don_gia_tai_thoi_diem và thanh_tien phải khớp tong_tien ở don_hang)
+-- LƯU Ý: san_pham_id giả định tồn tại (theo danh sách sản phẩm bạn đã chèn — IDs 1..75)
+INSERT INTO `chi_tiet_don_hang` (`chi_tiet_id`, `don_hang_id`, `san_pham_id`, `so_luong`, `don_gia_tai_thoi_diem`, `thanh_tien`)
+VALUES
+(1, 1, 1, 1, 4500000.00, 4500000.00),   -- đơn 1: 1 x Chanel N°5 = 4,500,000
+(2, 2, 3, 2, 3800000.00, 7600000.00),   -- đơn 2: 2 x Chanel Bleu de Chanel (ví dụ) = 7,600,000
+(3, 3, 5, 1, 3900000.00, 3900000.00);   -- đơn 3: 1 x Chanel Allure Homme Sport = 3,900,000
+
+-- 4.8 LỊCH SỬ SỬ DỤNG MÃ GIẢM GIÁ
+-- Ở đây đơn hàng 3 dùng mã ORI10 (10% -> giảm 390,000 => tong_tien = 3,900,000 - 390,000 = 3,510,000)
+INSERT INTO `lich_su_su_dung_ma_giam_gia` (`ls_id`, `don_hang_id`, `ma_giam_gia_id`, `gia_tri_giam_thuc_te`, `ngay_su_dung`)
+VALUES
+(1, 3, 1, 390000.00, '2025-11-17 09:01:00');
+
+-- 4.9 ĐÁNH GIÁ SẢN PHẨM
+INSERT INTO `danh_gia_san_pham` (`danh_gia_id`, `san_pham_id`, `nguoi_dung_id`, `xep_hang`, `binh_luan`, `ngay_tao`)
+VALUES
+(1, 1, 2, 5, 'Hương thơm tuyệt vời, giữ mùi lâu. Rất hài lòng!', '2025-11-15 11:00:00'),
+(2, 3, 2, 4, 'Mùi dễ dùng, phù hợp hàng ngày.', '2025-11-16 15:00:00'),
+(3, 5, 2, 5, 'Chất lượng tốt, đóng gói chắc chắn.', '2025-11-17 10:00:00');
+
+-- 4.10 LỊCH SỬ CHAT (Chatbot)
+INSERT INTO `lich_su_chat` (`log_id`, `nguoi_dung_id`, `session_id`, `loai_nguoi_gui`, `noi_dung`, `thoi_gian`)
+VALUES
+(1, 2, 'sess_abc123', 'nguoi_dung', 'Xin chào, tôi muốn hỏi về thời gian giao hàng.', '2025-11-15 10:05:00'),
+(2, 2, 'sess_abc123', 'bot', 'Chào bạn! Đơn hàng sẽ giao trong 2-4 ngày làm việc.', '2025-11-15 10:05:05'),
+(3, NULL, 'sess_guest_01', 'nguoi_dung', 'Tôi muốn chọn mã giảm giá ORI10, làm sao áp dụng?', '2025-11-16 14:00:00'),
+(4, NULL, 'sess_guest_01', 'bot', 'Bạn chỉ cần nhập mã ORI10 ở bước thanh toán nếu đơn hàng >= 500,000đ.', '2025-11-16 14:00:03');
+
+-- 4.11 ALBUM ẢNH (cho một số sản phẩm)
+INSERT INTO `album_anh` (`album_id`, `san_pham_id`, `ten_album`, `slug`, `mo_ta`)
+VALUES
+(1, 1, 'Ảnh Sản Phẩm Chính - Chanel N°5', 'chanel-no5-main', 'Album ảnh chính cho Chanel N°5'),
+(2, 3, 'Ảnh Tổng Quan - Bleu de Chanel', 'chanel-bleu-gallery', 'Ảnh tổng hợp Bleu de Chanel'),
+(3, 5, 'Ảnh Chi Tiết - Allure Homme Sport', 'chanel-allure-detail', 'Ảnh chi tiết Allure Homme Sport');
+
+-- 4.12 CHI TIẾT ẢNH
+INSERT INTO `chi_tiet_anh` (`anh_id`, `album_id`, `tieu_de`, `url_day_du`, `vi_tri`, `trang_thai_hien_thi`)
+VALUES
+(1, 1, 'Chanel No5 - Hộp Chính', '/images/chanel_no5_box.jpg', 1, TRUE),
+(2, 1, 'Chanel No5 - Chai 100ml', '/images/chanel_no5_bottle.jpg', 2, TRUE),
+(3, 2, 'Bleu - Góc nhìn trước', '/images/chanel_bleu_front.jpg', 1, TRUE),
+(4, 2, 'Bleu - Góc nhìn sau', '/images/chanel_bleu_back.jpg', 2, TRUE),
+(5, 3, 'Allure - Chai', '/images/chanel_allure_bottle.jpg', 1, TRUE),
+(6, 3, 'Allure - Hộp', '/images/chanel_allure_box.jpg', 2, TRUE);
+
 -- Bật lại kiểm tra khóa ngoại
 SET FOREIGN_KEY_CHECKS = 1;
+
