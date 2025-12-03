@@ -3,7 +3,7 @@ const db = require('../config/database');
 // Lấy danh sách sản phẩm (có phân trang, lọc)
 exports.getProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 12, danh_muc_id, search, sort = 'moi_nhat' } = req.query;
+    const { page = 1, limit = 12, danh_muc_id, search, sort = 'moi_nhat', giam_gia } = req.query;
     const offset = (page - 1) * limit;
 
     let query = `
@@ -26,11 +26,18 @@ exports.getProducts = async (req, res) => {
       params.push(`%${search}%`);
     }
 
+    // Lọc sản phẩm giảm giá
+    if (giam_gia === 'true') {
+      query += ' AND sp.phan_tram_giam > 0';
+    }
+
     // Sắp xếp
     if (sort === 'gia_thap') {
       query += ' ORDER BY sp.gia_ban ASC';
     } else if (sort === 'gia_cao') {
       query += ' ORDER BY sp.gia_ban DESC';
+    } else if (sort === 'giam_gia') {
+      query += ' ORDER BY sp.phan_tram_giam DESC';
     } else {
       query += ' ORDER BY sp.ngay_tao DESC';
     }
@@ -50,6 +57,9 @@ exports.getProducts = async (req, res) => {
     if (search) {
       countQuery += ' AND ten_san_pham LIKE ?';
       countParams.push(`%${search}%`);
+    }
+    if (giam_gia === 'true') {
+      countQuery += ' AND phan_tram_giam > 0';
     }
 
     const [countResult] = await db.query(countQuery, countParams);
