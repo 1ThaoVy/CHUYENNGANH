@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Orianna Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Admin Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold text-primary">Admin Dashboard</h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="index.html" class="text-primary font-semibold">Tổng quan</a>
+                        <a href="products.html" class="text-gray-700 hover:text-primary">Sản phẩm</a>
+                        <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="admin-name" class="text-gray-700"></span>
+                    <a href="../index.html" class="text-gray-700 hover:text-primary">Về trang chủ</a>
+                    <button onclick="logout()" class="text-red-600 hover:text-red-700">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Tổng sản phẩm</p>
+                        <p id="total-products" class="text-3xl font-bold text-primary">0</p>
+                    </div>
+                    <div class="text-4xl">📦</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Đơn hàng mới</p>
+                        <p id="new-orders" class="text-3xl font-bold text-yellow-500">0</p>
+                    </div>
+                    <div class="text-4xl">🛒</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Đơn hoàn thành</p>
+                        <p id="completed-orders" class="text-3xl font-bold text-green-500">0</p>
+                    </div>
+                    <div class="text-4xl">✅</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Doanh thu</p>
+                        <p id="revenue" class="text-3xl font-bold text-primary">0đ</p>
+                    </div>
+                    <div class="text-4xl">💰</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">Đơn hàng gần đây</h2>
+            <div id="recent-orders" class="overflow-x-auto">
+                <p class="text-gray-500">Đang tải...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script>
+        // Check admin auth
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user || user.vai_tro !== 'admin') {
+            alert('Bạn không có quyền truy cập trang này!');
+            window.location.href = '../index.html';
+        }
+
+        document.getElementById('admin-name').textContent = user.ho_ten;
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                // Load products count
+                const productsRes = await apiCall('/products?limit=1');
+                document.getElementById('total-products').textContent = productsRes.pagination.total;
+
+                // Load orders (simplified - you may need to add admin endpoints)
+                // For now, showing placeholder data
+                document.getElementById('new-orders').textContent = '5';
+                document.getElementById('completed-orders').textContent = '23';
+                document.getElementById('revenue').textContent = '125,000,000đ';
+
+                // Recent orders placeholder
+                document.getElementById('recent-orders').innerHTML = `
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">Mã ĐH</th>
+                                <th class="text-left py-2">Khách hàng</th>
+                                <th class="text-left py-2">Tổng tiền</th>
+                                <th class="text-left py-2">Trạng thái</th>
+                                <th class="text-left py-2">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-2">#001</td>
+                                <td class="py-2">Nguyễn Văn A</td>
+                                <td class="py-2">4,500,000đ</td>
+                                <td class="py-2"><span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">Chờ xử lý</span></td>
+                                <td class="py-2"><a href="orders.html" class="text-primary hover:underline">Xem</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

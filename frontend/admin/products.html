@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-8">
+                    <h1 class="text-2xl font-bold text-primary">Admin Dashboard</h1>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="index.html" class="text-gray-700 hover:text-primary">Tổng quan</a>
+                        <a href="products.html" class="text-primary font-semibold">Sản phẩm</a>
+                        <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="../index.html" class="text-gray-700 hover:text-primary">Về trang chủ</a>
+                    <button onclick="logout()" class="text-red-600 hover:text-red-700">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Quản lý sản phẩm</h2>
+            <button onclick="showAddModal()" class="bg-primary hover:bg-cyan-600 text-white px-6 py-2 rounded-lg">
+                + Thêm sản phẩm
+            </button>
+        </div>
+
+        <!-- Products Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div id="products-table" class="overflow-x-auto">
+                <p class="p-6 text-gray-500">Đang tải...</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-center gap-2 mt-6"></div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="product-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <h3 id="modal-title" class="text-2xl font-bold mb-6">Thêm sản phẩm</h3>
+            <form id="product-form" class="space-y-4">
+                <input type="hidden" id="product-id">
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tên sản phẩm *</label>
+                    <input type="text" id="ten_san_pham" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Thương hiệu *</label>
+                    <select id="danh_muc_id" required class="w-full px-4 py-2 border rounded-lg">
+                        <option value="">Chọn thương hiệu</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Giá bán *</label>
+                        <input type="number" id="gia_ban" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Số lượng *</label>
+                        <input type="number" id="so_luong_ton" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Dung tích</label>
+                    <input type="text" id="dung_tich" class="w-full px-4 py-2 border rounded-lg" placeholder="VD: 100ml EDP">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                    <textarea id="mo_ta" rows="3" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Hình ảnh</label>
+                    <input type="file" id="image-upload" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
+                    <p class="text-sm text-gray-500 mt-1">Chọn ảnh sản phẩm (tối đa 5MB)</p>
+                    <div id="image-preview" class="mt-2"></div>
+                    <input type="hidden" id="url_hinh_anh_chinh">
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-primary hover:bg-cyan-600 text-white py-2 rounded-lg">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="admin-products.js"></script>
+</body>
+</html>
