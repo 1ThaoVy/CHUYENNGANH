@@ -11,6 +11,12 @@ function checkAuth() {
         if (userMenu) userMenu.classList.remove('hidden');
         if (guestMenu) guestMenu.classList.add('hidden');
         if (userName) userName.textContent = `Xin chào, ${user.ho_ten}`;
+        
+        // Show admin link if user is admin
+        const adminLink = document.getElementById('admin-link');
+        if (adminLink && user.vai_tro === 'admin') {
+            adminLink.classList.remove('hidden');
+        }
     } else {
         if (userMenu) userMenu.classList.add('hidden');
         if (guestMenu) guestMenu.classList.remove('hidden');
