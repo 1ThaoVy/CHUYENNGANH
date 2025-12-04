@@ -137,3 +137,20 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
+
+
+// Lấy tất cả đơn hàng (Admin only)
+exports.getAllOrders = async (req, res) => {
+  try {
+    const [orders] = await db.query(`
+      SELECT dh.*, ttdh.ten_trang_thai, ttdh.ma_mau_sac
+      FROM don_hang dh
+      JOIN trang_thai_don_hang ttdh ON dh.trang_thai_don_hang_id = ttdh.trang_thai_id
+      ORDER BY dh.ngay_dat_hang DESC
+    `);
+
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+  }
+};

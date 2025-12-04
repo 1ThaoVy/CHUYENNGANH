@@ -3,7 +3,13 @@ const db = require('../config/database');
 // Lấy tất cả danh mục
 exports.getCategories = async (req, res) => {
   try {
-    const [categories] = await db.query('SELECT * FROM danh_muc ORDER BY ten_danh_muc');
+    const [categories] = await db.query(`
+      SELECT dm.*, COUNT(sp.san_pham_id) as so_luong_san_pham
+      FROM danh_muc dm
+      LEFT JOIN san_pham sp ON dm.danh_muc_id = sp.danh_muc_id AND sp.trang_thai_hien_thi = 1
+      GROUP BY dm.danh_muc_id
+      ORDER BY dm.ten_danh_muc
+    `);
     res.json({ success: true, data: categories });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });

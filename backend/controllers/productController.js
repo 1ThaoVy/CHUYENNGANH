@@ -28,7 +28,7 @@ exports.getProducts = async (req, res) => {
 
     // Lọc sản phẩm giảm giá
     if (giam_gia === 'true') {
-      query += ' AND sp.phan_tram_giam > 0';
+      query += ' AND sp.phan_tram_giam_gia > 0';
     }
 
     // Sắp xếp
@@ -37,7 +37,7 @@ exports.getProducts = async (req, res) => {
     } else if (sort === 'gia_cao') {
       query += ' ORDER BY sp.gia_ban DESC';
     } else if (sort === 'giam_gia') {
-      query += ' ORDER BY sp.phan_tram_giam DESC';
+      query += ' ORDER BY sp.phan_tram_giam_gia DESC';
     } else {
       query += ' ORDER BY sp.ngay_tao DESC';
     }
@@ -59,7 +59,7 @@ exports.getProducts = async (req, res) => {
       countParams.push(`%${search}%`);
     }
     if (giam_gia === 'true') {
-      countQuery += ' AND phan_tram_giam > 0';
+      countQuery += ' AND phan_tram_giam_gia > 0';
     }
 
     const [countResult] = await db.query(countQuery, countParams);
