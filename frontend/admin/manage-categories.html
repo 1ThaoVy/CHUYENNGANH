@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Danh mục - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 text-white">
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3 mb-2">
+                    <span class="text-3xl">🔐</span>
+                    <h1 class="text-2xl font-bold">Orianna<br>Admin</h1>
+                </div>
+                <p class="text-sm text-gray-400">Quản trị viên</p>
+            </div>
+            <nav class="px-4">
+                <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📦</span>
+                    <span>Sản phẩm</span>
+                </a>
+                <a href="orders.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-700 mb-2">
+                    <span class="text-xl">🏷️</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="#" onclick="alert('Chức năng đang phát triển'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 opacity-50">
+                    <span class="text-xl">👥</span>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="#" onclick="alert('Chức năng đang phát triển'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 opacity-50">
+                    <span class="text-xl">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 mt-8">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-red-700 bg-red-600 mb-2 mt-2">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-2">Quản lý Danh mục</h2>
+                <p class="text-gray-600">Quản lý các thương hiệu nước hoa</p>
+            </div>
+
+            <!-- Add Category Button -->
+            <div class="mb-6">
+                <button onclick="showAddModal()" class="bg-primary hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold">
+                    + Thêm Danh mục
+                </button>
+            </div>
+
+            <!-- Categories Table -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Tên Danh mục</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Slug</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Mô tả</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Số sản phẩm</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categories-table">
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Đang tải...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="category-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <h3 id="modal-title" class="text-2xl font-bold mb-6">Thêm Danh mục</h3>
+            
+            <form id="category-form" class="space-y-4">
+                <input type="hidden" id="category-id">
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Tên Danh mục *</label>
+                    <input type="text" id="ten_danh_muc" required
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Slug *</label>
+                    <input type="text" id="slug" required
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    <p class="text-sm text-gray-500 mt-1">VD: chanel, dior, gucci</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Mô tả</label>
+                    <textarea id="mo_ta" rows="3"
+                              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+
+                <div class="flex space-x-4 pt-4">
+                    <button type="submit" class="flex-1 bg-primary hover:bg-cyan-600 text-white py-2 rounded-lg font-semibold">
+                        Lưu
+                    </button>
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-semibold">
+                        Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="admin-auth.js"></script>
+    <script>
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '../login.html';
+            }
+        }
+    </script>
+    <script>
+        let categories = [];
+
+        // Load categories
+        async function loadCategories() {
+            try {
+                const data = await apiCall('/categories');
+                categories = data.data;
+                displayCategories();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('categories-table').innerHTML = `
+                    <tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Lỗi tải dữ liệu</td></tr>
+                `;
+            }
+        }
+
+        // Display categories
+        function displayCategories() {
+            const tbody = document.getElementById('categories-table');
+            
+            if (categories.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Chưa có danh mục nào</td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = categories.map(cat => `
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-6 py-4">${cat.danh_muc_id}</td>
+                    <td class="px-6 py-4 font-semibold">${cat.ten_danh_muc}</td>
+                    <td class="px-6 py-4 text-gray-600">${cat.slug}</td>
+                    <td class="px-6 py-4 text-gray-600">${cat.mo_ta || '-'}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            ${cat.so_luong_san_pham || 0} sản phẩm
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button onclick="editCategory(${cat.danh_muc_id})" class="text-blue-600 hover:text-blue-800 mr-3">
+                            ✏️ Sửa
+                        </button>
+                        <button onclick="deleteCategory(${cat.danh_muc_id})" class="text-red-600 hover:text-red-800">
+                            🗑️ Xóa
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Show add modal
+        function showAddModal() {
+            document.getElementById('modal-title').textContent = 'Thêm Danh mục';
+            document.getElementById('category-form').reset();
+            document.getElementById('category-id').value = '';
+            document.getElementById('category-modal').classList.remove('hidden');
+        }
+
+        // Edit category
+        function editCategory(id) {
+            const category = categories.find(c => c.danh_muc_id === id);
+            if (!category) return;
+
+            document.getElementById('modal-title').textContent = 'Sửa Danh mục';
+            document.getElementById('category-id').value = category.danh_muc_id;
+            document.getElementById('ten_danh_muc').value = category.ten_danh_muc;
+            document.getElementById('slug').value = category.slug;
+            document.getElementById('mo_ta').value = category.mo_ta || '';
+            document.getElementById('category-modal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('category-modal').classList.add('hidden');
+        }
+
+        // Handle form submit
+        document.getElementById('category-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const categoryId = document.getElementById('category-id').value;
+            const formData = {
+                ten_danh_muc: document.getElementById('ten_danh_muc').value,
+                slug: document.getElementById('slug').value,
+                mo_ta: document.getElementById('mo_ta').value
+            };
+
+            try {
+                if (categoryId) {
+                    // Update
+                    await apiCall(`/categories/${categoryId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(formData)
+                    });
+                    alert('Cập nhật danh mục thành công!');
+                } else {
+                    // Create
+                    await apiCall('/categories', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+                    alert('Thêm danh mục thành công!');
+                }
+                
+                closeModal();
+                loadCategories();
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            }
+        });
+
+        // Delete category
+        async function deleteCategory(id) {
+            if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
+
+            try {
+                await apiCall(`/categories/${id}`, { method: 'DELETE' });
+                alert('Xóa danh mục thành công!');
+                loadCategories();
+            } catch (error) {
+                alert('Lỗi: ' + error.message);
+            }
+        }
+
+        // Auto generate slug
+        document.getElementById('ten_danh_muc').addEventListener('input', (e) => {
+            const slug = e.target.value
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            document.getElementById('slug').value = slug;
+        });
+
+        // Load on page load
+        loadCategories();
+    </script>
+</body>
+</html>

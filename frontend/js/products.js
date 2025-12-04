@@ -60,25 +60,35 @@ async function loadProducts() {
         }
 
         grid.innerHTML = data.data.map(product => {
-            const hasDiscount = product.phan_tram_giam > 0;
+            const hasDiscount = product.phan_tram_giam_gia > 0;
             return `
                 <a href="product-detail.html?id=${product.san_pham_id}" 
                    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition relative">
                     ${hasDiscount ? `
-                        <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold z-10">
-                            -${product.phan_tram_giam}%
+                        <div class="absolute top-3 left-3 bg-red-500 text-white px-4 py-2 rounded-lg text-base font-bold z-10">
+                            -${product.phan_tram_giam_gia}%
                         </div>
                     ` : ''}
-                    <div class="h-64 bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-400">Hình ảnh</span>
+                    <div class="h-64 bg-gray-200 flex items-center justify-center overflow-hidden">
+                        ${product.url_hinh_anh_chinh ? `
+                            <img src="http://localhost:3001${product.url_hinh_anh_chinh}" 
+                                 alt="${product.ten_san_pham}" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                            <div style="display:none" class="w-full h-full flex items-center justify-center">
+                                <span class="text-gray-400">Hình ảnh</span>
+                            </div>
+                        ` : `
+                            <span class="text-gray-400">Hình ảnh</span>
+                        `}
                     </div>
                     <div class="p-4">
-                        <h3 class="font-semibold text-lg mb-2 line-clamp-2">${product.ten_san_pham}</h3>
-                        <p class="text-sm text-gray-600 mb-2">${product.ten_danh_muc}</p>
-                        <div class="flex justify-between items-center">
+                        <h3 class="font-semibold text-lg mb-1">${product.ten_san_pham}</h3>
+                        <p class="text-sm text-gray-500 mb-3">${product.ten_danh_muc}</p>
+                        <div class="flex justify-between items-end">
                             <div class="flex flex-col">
-                                ${hasDiscount ? `
-                                    <span class="text-sm text-gray-400 line-through">${formatCurrency(product.gia_goc)}</span>
+                                ${hasDiscount && product.gia_goc ? `
+                                    <span class="text-sm text-gray-300 line-through mb-1">${formatCurrency(product.gia_goc)}</span>
                                     <span class="text-xl font-bold text-red-600">${formatCurrency(product.gia_ban)}</span>
                                 ` : `
                                     <span class="text-xl font-bold text-primary">${formatCurrency(product.gia_ban)}</span>

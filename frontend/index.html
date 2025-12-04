@@ -21,46 +21,48 @@
         /* Custom brand fonts */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@400;700&family=Roboto+Mono:wght@400&display=swap');
         
-        /* Chanel - Elegant serif */
-        .brand-chanel {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            font-size: 1.5rem;
-        }
-        
-        /* Dior - Refined serif */
+        /* DIOR - Elegant serif, thin */
         .brand-dior {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
-            letter-spacing: 0.25em;
-            font-size: 1.5rem;
+            letter-spacing: 0.3em;
+            font-size: 2rem;
             text-transform: uppercase;
         }
         
-        /* Gucci - Bold serif */
-        .brand-gucci {
-            font-family: 'Cinzel', serif;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            font-size: 1.75rem;
-        }
-        
-        /* Le Labo - Modern mono */
-        .brand-lelabo {
-            font-family: 'Roboto Mono', monospace;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            font-size: 1.25rem;
+        /* CHANEL - Bold serif */
+        .brand-chanel {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            font-size: 1.8rem;
             text-transform: uppercase;
         }
         
-        /* Calvin Klein - Clean sans */
+        /* CALVIN KLEIN - Clean sans */
         .brand-calvinklein {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             letter-spacing: 0.15em;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+        
+        /* LE LABO - Modern mono */
+        .brand-lelabo {
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+        
+        /* GUCCI - Spaced serif */
+        .brand-gucci {
+            font-family: 'Cinzel', serif;
+            font-weight: 400;
+            letter-spacing: 0.25em;
+            font-size: 2rem;
             text-transform: uppercase;
         }
     </style>
@@ -70,7 +72,10 @@
     <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="text-2xl font-bold text-primary">Orianna Shop</a>
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold text-primary">Orianna Shop</span>
+                </a>
                 
                 <div class="hidden md:flex space-x-8">
                     <a href="index.html" class="text-gray-700 hover:text-primary">Trang chủ</a>
@@ -154,7 +159,7 @@
     <!-- Featured Products -->
     <section class="container mx-auto px-4 py-12">
         <h2 class="text-3xl font-bold text-center mb-8">🔥 Sản phẩm giảm giá đặc biệt</h2>
-        <div id="products" class="grid grid-cols-1 gap-8">
+        <div id="products">
             <!-- Products will be loaded here -->
         </div>
         <div class="text-center mt-8">
@@ -163,6 +168,33 @@
             </a>
         </div>
     </section>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold">Tìm kiếm sản phẩm</h3>
+                    <button onclick="toggleSearch()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <form onsubmit="handleSearch(event)" class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Nhập tên sản phẩm, thương hiệu..." 
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                    <button type="submit" class="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition">
+                        Tìm kiếm
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-auto">
@@ -176,6 +208,16 @@
     <script src="js/cart.js"></script>
     <script src="js/home.js"></script>
     <script>
+        // Toggle search modal
+        function toggleSearch() {
+            const modal = document.getElementById('search-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            }
+        }
+
+        // Handle search form
         function handleSearch(event) {
             event.preventDefault();
             const searchTerm = document.getElementById('search-input').value.trim();
@@ -183,6 +225,13 @@
                 window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
             }
         }
+
+        // Close modal when clicking outside
+        document.getElementById('search-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleSearch();
+            }
+        });
     </script>
     <script>
         // Slideshow functionality

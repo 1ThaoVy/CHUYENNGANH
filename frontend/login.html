@@ -70,7 +70,12 @@
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
-                window.location.href = 'index.html';
+                // Redirect dựa vào vai trò
+                if (data.user.vai_tro === 'admin') {
+                    window.location.href = 'admin/dashboard.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.classList.remove('hidden');
