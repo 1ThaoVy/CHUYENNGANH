@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Khách hàng - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold">Orianna Admin</h2>
+                    <p class="text-gray-400 text-sm">Quản trị viên</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
+                <a href="index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📦</span>
+                    <span>Sản phẩm</span>
+                </a>
+                <a href="orders.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏷️</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📰</span>
+                    <span>Tin tức</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
+                    <span class="text-xl">👥</span>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Khách hàng</h1>
+                    <p class="text-gray-600 text-sm">Quản lý thông tin khách hàng</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Xin chào, <span id="admin-name" class="font-medium">Admin</span></span>
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            <div class="mb-6">
+                <p class="text-gray-600">Xem và quản lý thông tin khách hàng</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Tổng khách hàng</p>
+                            <p id="total-customers" class="text-3xl font-bold text-gray-800 mt-2">0</p>
+                        </div>
+                        <div class="text-4xl">👥</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Khách mới (tháng)</p>
+                            <p id="new-customers" class="text-3xl font-bold text-green-600 mt-2">0</p>
+                        </div>
+                        <div class="text-4xl">✨</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Khách VIP</p>
+                            <p id="vip-customers" class="text-3xl font-bold text-yellow-600 mt-2">0</p>
+                        </div>
+                        <div class="text-4xl">⭐</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Đang hoạt động</p>
+                            <p id="active-customers" class="text-3xl font-bold text-blue-600 mt-2">0</p>
+                        </div>
+                        <div class="text-4xl">🟢</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="mb-6 flex gap-4">
+                <input type="text" id="search-input" placeholder="Tìm kiếm theo tên, email, SĐT..." class="flex-1 px-4 py-2 border rounded-lg">
+                <select id="role-filter" class="px-4 py-2 border rounded-lg">
+                    <option value="">Tất cả vai trò</option>
+                    <option value="user">Khách hàng</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button onclick="loadCustomers()" class="bg-primary hover:bg-cyan-600 text-white px-6 py-2 rounded-lg">
+                    🔍 Tìm kiếm
+                </button>
+            </div>
+
+            <!-- Customers Table -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Họ tên</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Số điện thoại</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Vai trò</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Ngày tạo</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table">
+                            <tr>
+                                <td colspan="7" class="px-6 py-8 text-center text-gray-500">Đang tải...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- View Customer Modal -->
+    <div id="customer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Thông tin khách hàng</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <div id="customer-details" class="space-y-4">
+                <!-- Customer details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="admin-auth.js"></script>
+    <script>
+        let customers = [];
+
+        // Load customers
+        async function loadCustomers() {
+            try {
+                console.log('Loading customers...');
+                const response = await apiCall('/auth/users');
+                customers = response.data || [];
+                console.log('Customers loaded:', customers.length);
+                
+                // Apply filters
+                const searchTerm = document.getElementById('search-input').value;
+                const roleFilter = document.getElementById('role-filter').value;
+                
+                let filtered = customers;
+                if (searchTerm) {
+                    filtered = filtered.filter(c => 
+                        c.ho_ten.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (c.so_dien_thoai && c.so_dien_thoai.includes(searchTerm))
+                    );
+                }
+                if (roleFilter) {
+                    filtered = filtered.filter(c => c.vai_tro === roleFilter);
+                }
+                
+                displayCustomers(filtered);
+                updateStats();
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                document.getElementById('customers-table').innerHTML = `
+                    <tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Lỗi tải dữ liệu: ${error.message}</td></tr>
+                `;
+            }
+        }
+
+        // Display customers
+        function displayCustomers(data) {
+            const tbody = document.getElementById('customers-table');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Chưa có khách hàng nào</td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = data.map(customer => `
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-6 py-4">${customer.nguoi_dung_id}</td>
+                    <td class="px-6 py-4 font-semibold">${customer.ho_ten}</td>
+                    <td class="px-6 py-4">${customer.email}</td>
+                    <td class="px-6 py-4">${customer.so_dien_thoai || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 rounded-full text-sm ${customer.vai_tro === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                            ${customer.vai_tro === 'admin' ? 'Admin' : 'Khách hàng'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">${new Date(customer.ngay_tao).toLocaleDateString('vi-VN')}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="viewCustomer(${customer.nguoi_dung_id})" class="text-blue-600 hover:text-blue-800 mr-3">
+                            👁️ Xem
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('total-customers').textContent = customers.length;
+            
+            const thisMonth = new Date();
+            thisMonth.setDate(1);
+            const newCustomers = customers.filter(c => new Date(c.ngay_tao) >= thisMonth);
+            document.getElementById('new-customers').textContent = newCustomers.length;
+            
+            // VIP customers (example: admins for now)
+            const vipCustomers = customers.filter(c => c.vai_tro === 'admin');
+            document.getElementById('vip-customers').textContent = vipCustomers.length;
+            
+            // Active customers (all for now)
+            const activeCustomers = customers.filter(c => c.trang_thai === 'active');
+            document.getElementById('active-customers').textContent = activeCustomers.length;
+        }
+
+        // View customer details
+        async function viewCustomer(id) {
+            const customer = customers.find(c => c.nguoi_dung_id === id);
+            if (!customer) return;
+
+            document.getElementById('customer-details').innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Họ tên</p>
+                        <p class="font-semibold">${customer.ho_ten}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-semibold">${customer.email}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Số điện thoại</p>
+                        <p class="font-semibold">${customer.so_dien_thoai || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Vai trò</p>
+                        <p class="font-semibold">${customer.vai_tro}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Địa chỉ</p>
+                        <p class="font-semibold">${customer.dia_chi || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Ngày đăng ký</p>
+                        <p class="font-semibold">${new Date(customer.ngay_tao).toLocaleString('vi-VN')}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Trạng thái</p>
+                        <p class="font-semibold">
+                            <span class="px-2 py-1 rounded-full text-xs ${customer.trang_thai === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${customer.trang_thai === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-6 pt-6 border-t">
+                    <h4 class="font-bold mb-3">Thống kê</h4>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <p class="text-2xl font-bold text-blue-600">0</p>
+                            <p class="text-sm text-gray-600">Đơn hàng</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <p class="text-2xl font-bold text-green-600">0đ</p>
+                            <p class="text-sm text-gray-600">Tổng chi tiêu</p>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <p class="text-2xl font-bold text-purple-600">0</p>
+                            <p class="text-sm text-gray-600">Đánh giá</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('customer-modal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('customer-modal').classList.add('hidden');
+        }
+
+        // Search on enter
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loadCustomers();
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomers();
+        });
+    </script>
+</body>
+</html>

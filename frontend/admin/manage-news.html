@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý tin tức - Admin Orianna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold">Orianna Admin</h2>
+                    <p class="text-gray-400 text-sm">Quản trị viên</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
+                <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📦</span>
+                    <span>Sản phẩm</span>
+                </a>
+                <a href="orders.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏷️</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
+                    <span class="text-xl">📰</span>
+                    <span>Tin tức</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">👥</span>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Tin tức</h1>
+                    <p class="text-gray-600 text-sm">Quản lý bài viết và tin tức</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Xin chào, <span id="admin-name" class="font-medium">Admin</span></span>
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            <!-- Action Bar -->
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center space-x-4">
+                    <select id="status-filter" class="border rounded-lg px-3 py-2">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="ban_nhap">Bản nháp</option>
+                        <option value="da_xuat_ban">Đã xuất bản</option>
+                        <option value="an">Ẩn</option>
+                    </select>
+                    <input type="text" id="search-input" placeholder="Tìm kiếm bài viết..." 
+                           class="border rounded-lg px-3 py-2 w-64">
+                </div>
+                <button onclick="openCreateModal()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark">
+                    <i class="fas fa-plus mr-2"></i> Tạo bài viết mới
+                </button>
+            </div>
+
+            <!-- Articles Table -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiêu đề</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tác giả</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lượt xem</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articles-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Articles will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="flex justify-center mt-6">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Article Modal -->
+    <div id="article-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6 border-b">
+                    <h3 id="modal-title" class="text-xl font-bold">Tạo bài viết mới</h3>
+                </div>
+                <form id="article-form" class="p-6 space-y-4">
+                    <input type="hidden" id="article-id">
+                    <input type="hidden" id="article-slug">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
+                        <input type="text" id="article-title" required 
+                               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tóm tắt</label>
+                        <textarea id="article-summary" rows="3" 
+                                  class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh đại diện</label>
+                        <div class="space-y-3">
+                            <!-- Upload File -->
+                            <div>
+                                <input type="file" id="article-image-file" accept="image/*" 
+                                       class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                       onchange="handleImageUpload(event)">
+                                <p class="text-xs text-gray-500 mt-1">Chọn ảnh từ máy tính (JPG, PNG, GIF - tối đa 5MB)</p>
+                            </div>
+                            
+                            <!-- Hoặc nhập URL -->
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-2 bg-white text-gray-500">hoặc</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <input type="url" id="article-image-url" 
+                                       class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                       placeholder="https://example.com/image.jpg">
+                                <p class="text-xs text-gray-500 mt-1">Nhập đường dẫn ảnh từ internet</p>
+                            </div>
+                            
+                            <!-- Preview ảnh -->
+                            <div id="image-preview" class="hidden">
+                                <img id="preview-img" src="" alt="Preview" class="w-32 h-32 object-cover rounded-lg border">
+                                <button type="button" onclick="removeImagePreview()" 
+                                        class="mt-2 text-red-600 text-sm hover:text-red-800">
+                                    <i class="fas fa-trash mr-1"></i> Xóa ảnh
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="article-image" name="hinh_anh_dai_dien">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nội dung *</label>
+                        <textarea id="article-content" rows="15" required 
+                                  class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                  placeholder="Nhập nội dung HTML..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                        <select id="article-status" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="ban_nhap">Bản nháp</option>
+                            <option value="da_xuat_ban">Đã xuất bản</option>
+                            <option value="an">Ẩn</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" onclick="closeModal()" 
+                                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Hủy
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                            Lưu bài viết
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentStatus = '';
+        let currentSearch = '';
+
+        // Check admin auth
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user || user.vai_tro !== 'admin') {
+            alert('Bạn không có quyền truy cập trang này!');
+            window.location.href = '../index.html';
+        }
+
+        document.getElementById('admin-name').textContent = user.ho_ten;
+
+        // Load articles
+        async function loadArticles(page = 1) {
+            try {
+                let url = `/news/admin/all?page=${page}&limit=10`;
+                if (currentStatus) url += `&status=${currentStatus}`;
+
+                const response = await apiCall(url);
+                const { data: articles, pagination } = response;
+
+                const tbody = document.getElementById('articles-table-body');
+                
+                if (articles.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Không có bài viết nào</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = articles.map(article => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                ${article.hinh_anh_dai_dien ? `
+                                    <img src="${article.hinh_anh_dai_dien}" alt="" class="w-12 h-12 object-cover rounded mr-3">
+                                ` : ''}
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">${article.tieu_de}</div>
+                                    <div class="text-sm text-gray-500">${article.slug}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-900">${article.tac_gia_ten}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 text-xs rounded-full ${getStatusClass(article.trang_thai)}">
+                                ${getStatusText(article.trang_thai)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-900">${article.luot_xem}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">${formatDate(article.ngay_tao)}</td>
+                        <td class="px-6 py-4 text-sm space-x-2">
+                            <button onclick="editArticle(${article.tin_tuc_id})" 
+                                    class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <a href="../news-detail.html?slug=${article.slug}" target="_blank"
+                               class="text-green-600 hover:text-green-800">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button onclick="deleteArticle(${article.tin_tuc_id})" 
+                                    class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                updatePagination(pagination);
+                currentPage = page;
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                alert('Có lỗi xảy ra khi tải danh sách bài viết');
+            }
+        }
+
+        // Get status class for styling
+        function getStatusClass(status) {
+            switch (status) {
+                case 'da_xuat_ban': return 'bg-green-100 text-green-800';
+                case 'ban_nhap': return 'bg-yellow-100 text-yellow-800';
+                case 'an': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // Get status text
+        function getStatusText(status) {
+            switch (status) {
+                case 'da_xuat_ban': return 'Đã xuất bản';
+                case 'ban_nhap': return 'Bản nháp';
+                case 'an': return 'Ẩn';
+                default: return status;
+            }
+        }
+
+        // Update pagination
+        function updatePagination(pagination) {
+            const container = document.getElementById('pagination');
+            const { page, totalPages } = pagination;
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '<div class="flex items-center space-x-2">';
+
+            if (page > 1) {
+                paginationHTML += `
+                    <button onclick="loadArticles(${page - 1})" 
+                            class="px-3 py-2 bg-white border rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+            }
+
+            for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) {
+                paginationHTML += `
+                    <button onclick="loadArticles(${i})" 
+                            class="px-4 py-2 border rounded-lg ${i === page ? 'bg-primary text-white' : 'bg-white hover:bg-gray-50'}">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            if (page < totalPages) {
+                paginationHTML += `
+                    <button onclick="loadArticles(${page + 1})" 
+                            class="px-3 py-2 bg-white border rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+            }
+
+            paginationHTML += '</div>';
+            container.innerHTML = paginationHTML;
+        }
+
+        // Open create modal
+        function openCreateModal() {
+            document.getElementById('modal-title').textContent = 'Tạo bài viết mới';
+            document.getElementById('article-form').reset();
+            document.getElementById('article-id').value = '';
+            document.getElementById('article-modal').classList.remove('hidden');
+        }
+
+        // Edit article
+        async function editArticle(id) {
+            try {
+                // Get article data from table or make API call
+                document.getElementById('modal-title').textContent = 'Chỉnh sửa bài viết';
+                document.getElementById('article-id').value = id;
+                document.getElementById('article-modal').classList.remove('hidden');
+                
+                // You would typically load the article data here
+                // For now, we'll just open the modal
+            } catch (error) {
+                console.error('Error loading article for edit:', error);
+                alert('Có lỗi xảy ra khi tải thông tin bài viết');
+            }
+        }
+
+        // Delete article
+        async function deleteArticle(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
+
+            try {
+                await apiCall(`/news/admin/${id}`, 'DELETE');
+                alert('Xóa bài viết thành công!');
+                loadArticles(currentPage);
+            } catch (error) {
+                console.error('Error deleting article:', error);
+                alert('Có lỗi xảy ra khi xóa bài viết');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('article-modal').classList.add('hidden');
+        }
+
+        // Generate slug from title
+        function generateSlug(title) {
+            return title
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[đĐ]/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+        }
+
+        // Handle image upload
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước ảnh không được vượt quá 5MB');
+                event.target.value = '';
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
+                event.target.value = '';
+                return;
+            }
+
+            try {
+                // Create FormData for upload
+                const formData = new FormData();
+                formData.append('image', file);
+                // Sử dụng thư mục image gốc
+
+                // Show loading
+                const preview = document.getElementById('image-preview');
+                const previewImg = document.getElementById('preview-img');
+                previewImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjMDZCNkQ0Ii8+Cjwvc3ZnPgo=';
+                preview.classList.remove('hidden');
+
+                // Upload image
+                const response = await fetch('/api/upload/image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update preview and hidden input
+                    previewImg.src = result.imageUrl;
+                    document.getElementById('article-image').value = result.imageUrl;
+                    
+                    // Clear URL input
+                    document.getElementById('article-image-url').value = '';
+                    
+                    alert('Upload ảnh thành công!');
+                } else {
+                    throw new Error(result.message || 'Upload thất bại');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                alert('Có lỗi xảy ra khi upload ảnh: ' + error.message);
+                event.target.value = '';
+                document.getElementById('image-preview').classList.add('hidden');
+            }
+        }
+
+        // Handle URL input
+        function handleImageUrl() {
+            const url = document.getElementById('article-image-url').value;
+            if (url) {
+                const preview = document.getElementById('image-preview');
+                const previewImg = document.getElementById('preview-img');
+                
+                previewImg.src = url;
+                preview.classList.remove('hidden');
+                document.getElementById('article-image').value = url;
+                
+                // Clear file input
+                document.getElementById('article-image-file').value = '';
+            }
+        }
+
+        // Remove image preview
+        function removeImagePreview() {
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('article-image').value = '';
+            document.getElementById('article-image-file').value = '';
+            document.getElementById('article-image-url').value = '';
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        }
+
+        // Event listeners
+        document.getElementById('status-filter').addEventListener('change', function() {
+            currentStatus = this.value;
+            loadArticles(1);
+        });
+
+        document.getElementById('article-title').addEventListener('input', function() {
+            const slug = generateSlug(this.value);
+            document.getElementById('article-slug').value = slug;
+        });
+
+        document.getElementById('article-image-url').addEventListener('input', handleImageUrl);
+
+        document.getElementById('article-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                tieu_de: document.getElementById('article-title').value,
+                slug: document.getElementById('article-slug').value,
+                tom_tat: document.getElementById('article-summary').value,
+                noi_dung: document.getElementById('article-content').value,
+                hinh_anh_dai_dien: document.getElementById('article-image').value,
+                trang_thai: document.getElementById('article-status').value
+            };
+
+            // Debug: Log dữ liệu gửi đi
+            console.log('📝 Dữ liệu gửi đi:', formData);
+
+            // Validation
+            if (!formData.tieu_de.trim()) {
+                alert('Vui lòng nhập tiêu đề');
+                return;
+            }
+
+            if (!formData.slug.trim()) {
+                alert('Slug không được để trống. Vui lòng nhập tiêu đề trước.');
+                return;
+            }
+
+            if (!formData.noi_dung.trim()) {
+                alert('Vui lòng nhập nội dung');
+                return;
+            }
+
+            try {
+                const articleId = document.getElementById('article-id').value;
+                
+                if (articleId) {
+                    await apiCall(`/news/admin/${articleId}`, 'PUT', formData);
+                    alert('Cập nhật bài viết thành công!');
+                } else {
+                    const response = await apiCall('/news/admin', 'POST', formData);
+                    console.log('✅ Response:', response);
+                    alert('Tạo bài viết thành công!');
+                }
+                
+                closeModal();
+                loadArticles(currentPage);
+            } catch (error) {
+                console.error('❌ Error saving article:', error);
+                
+                // Hiển thị lỗi chi tiết hơn
+                let errorMessage = 'Có lỗi xảy ra khi lưu bài viết';
+                if (error.message) {
+                    errorMessage += ': ' + error.message;
+                }
+                
+                alert(errorMessage);
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadArticles();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('article-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -129,7 +129,7 @@ async function deleteProduct(id) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
     
     try {
-        await apiCall(`/products/${id}`, { method: 'DELETE' });
+        await apiCall(`/products/${id}`, 'DELETE');
         alert('Xóa thành công!');
         loadProducts(currentPage);
     } catch (error) {
@@ -147,8 +147,23 @@ document.getElementById('image-upload').addEventListener('change', async (e) => 
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước ảnh không được vượt quá 5MB');
+        e.target.value = '';
+        return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
+        e.target.value = '';
+        return;
+    }
+
     const formData = new FormData();
     formData.append('image', file);
+    // Không cần folder parameter, sử dụng thư mục image gốc
 
     try {
         const token = localStorage.getItem('token');
@@ -163,9 +178,14 @@ document.getElementById('image-upload').addEventListener('change', async (e) => 
         const data = await response.json();
         
         if (data.success) {
-            document.getElementById('url_hinh_anh_chinh').value = data.data.url;
+            document.getElementById('url_hinh_anh_chinh').value = data.imageUrl;
             document.getElementById('image-preview').innerHTML = `
-                <img src="http://localhost:3001${data.data.url}" class="w-32 h-32 object-cover rounded border">
+                <div class="relative">
+                    <img src="http://localhost:3001${data.imageUrl}" class="w-32 h-32 object-cover rounded border">
+                    <button type="button" onclick="removeImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                        ×
+                    </button>
+                </div>
             `;
             alert('Upload ảnh thành công!');
         } else {
@@ -175,6 +195,13 @@ document.getElementById('image-upload').addEventListener('change', async (e) => 
         alert('Lỗi upload ảnh: ' + error.message);
     }
 });
+
+// Remove image
+function removeImage() {
+    document.getElementById('url_hinh_anh_chinh').value = '';
+    document.getElementById('image-preview').innerHTML = '';
+    document.getElementById('image-upload').value = '';
+}
 
 // Submit form
 document.getElementById('product-form').addEventListener('submit', async (e) => {
@@ -194,17 +221,11 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
     try {
         if (productId) {
             // Update
-            await apiCall(`/products/${productId}`, {
-                method: 'PUT',
-                body: JSON.stringify(formData)
-            });
+            await apiCall(`/products/${productId}`, 'PUT', formData);
             alert('Cập nhật thành công!');
         } else {
             // Create
-            await apiCall('/products', {
-                method: 'POST',
-                body: JSON.stringify(formData)
-            });
+            await apiCall('/products', 'POST', formData);
             alert('Thêm sản phẩm thành công!');
         }
         

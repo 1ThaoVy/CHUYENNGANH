@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt Website - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold">Orianna Admin</h2>
+                    <p class="text-gray-400 text-sm">Quản trị viên</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
+                <a href="index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📦</span>
+                    <span>Sản phẩm</span>
+                </a>
+                <a href="orders.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏷️</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📰</span>
+                    <span>Tin tức</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">👥</span>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
+                    <span class="text-xl">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Cài đặt</h1>
+                    <p class="text-gray-600 text-sm">Cấu hình hệ thống</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Xin chào, <span id="admin-name" class="font-medium">Admin</span></span>
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            <!-- Contact Info Display -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Address Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">📍</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Địa chỉ</h3>
+                            <p id="display-dia-chi" class="text-gray-600 text-sm leading-relaxed">
+                                Nguyễn Thiện Thành, Phường Hòa Thuận<br>
+                                Tỉnh Vĩnh Long
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">📞</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Điện thoại</h3>
+                            <div class="text-gray-600 text-sm space-y-1">
+                                <div>Hotline: <span id="display-hotline" class="text-cyan-500 font-medium">078 747 2078</span></div>
+                                <div>Mobile: <span id="display-so-dien-thoai" class="text-cyan-500 font-medium">0388853044</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">📧</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Email</h3>
+                            <div class="text-gray-600 text-sm">
+                                <div>Hỗ trợ: <span id="display-email" class="text-cyan-500 font-medium">nguyenhuynhkitthuat94tv@gmail.com</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Working Hours Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">🕐</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Giờ làm việc</h3>
+                            <div id="display-gio-lam-viec" class="text-gray-600 text-sm space-y-1">
+                                <div>Thứ 2 - Thứ 6: 8:00 - 17:00</div>
+                                <div>Thứ 7 - CN: 8:00 - 16:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Website Info Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">🌐</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Thông tin Website</h3>
+                            <div class="text-gray-600 text-sm space-y-1">
+                                <div><strong>Tên:</strong> <span id="display-ten-website">Orianna Perfume Store</span></div>
+                                <div><strong>Công ty:</strong> <span id="display-ten-cong-ty">Cửa hàng nước hoa Orianna</span></div>
+                                <div><strong>MST:</strong> <span id="display-ma-so-thue">0123456789</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">📱</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Mạng xã hội</h3>
+                            <div class="text-gray-600 text-sm space-y-1">
+                                <div>Facebook: <span id="display-facebook" class="text-blue-500">@orianna.perfume.vinhlong</span></div>
+                                <div>Instagram: <span id="display-instagram" class="text-pink-500">@orianna_perfume_vl</span></div>
+                                <div>Zalo: <span id="display-zalo" class="text-blue-600">0388853044</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Info Card -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl">🏢</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Thông tin kinh doanh</h3>
+                            <div class="text-gray-600 text-sm space-y-1">
+                                <div><strong>GPKD:</strong> <span id="display-giay-phep">Đang cập nhật</span></div>
+                                <div><strong>Phí ship:</strong> <span id="display-phi-ship">25,000 VND</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Tính năng nổi bật</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl" id="display-feature-1-icon">🚚</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2" id="display-feature-1-title">Giao hàng tận nơi</h4>
+                        <p class="text-gray-600 text-sm" id="display-feature-1-desc">Giao hàng tận nơi trong khu vực Vĩnh Long</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl" id="display-feature-2-icon">💯</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2" id="display-feature-2-title">Nước hoa chính hãng</h4>
+                        <p class="text-gray-600 text-sm" id="display-feature-2-desc">100% nước hoa chính hãng từ các thương hiệu uy tín</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl" id="display-feature-3-icon">👨‍💼</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2" id="display-feature-3-title">Tư vấn chuyên nghiệp</h4>
+                        <p class="text-gray-600 text-sm" id="display-feature-3-desc">Đội ngũ tư vấn am hiểu về nước hoa</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl" id="display-feature-4-icon">💰</span>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2" id="display-feature-4-title">Giá cả hợp lý</h4>
+                        <p class="text-gray-600 text-sm" id="display-feature-4-desc">Giá cả cạnh tranh, nhiều ưu đãi hấp dẫn</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Policies Section -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Chính sách & Điều khoản</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <span class="text-xl mr-2">🛡️</span>
+                            Chính sách bảo hành
+                        </h4>
+                        <div class="text-gray-600 text-sm bg-gray-50 p-4 rounded-lg">
+                            <p id="display-bao-hanh">Sản phẩm nước hoa chính hãng được bảo hành về chất lượng. Đổi trả nếu phát hiện hàng giả hoặc không đúng mô tả.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <span class="text-xl mr-2">↩️</span>
+                            Chính sách đổi trả
+                        </h4>
+                        <div class="text-gray-600 text-sm bg-gray-50 p-4 rounded-lg">
+                            <p id="display-doi-tra">Đổi trả sản phẩm trong 3 ngày nếu sản phẩm bị lỗi hoặc không đúng mô tả. Sản phẩm phải còn nguyên seal.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <span class="text-xl mr-2">🚛</span>
+                            Chính sách giao hàng
+                        </h4>
+                        <div class="text-gray-600 text-sm bg-gray-50 p-4 rounded-lg">
+                            <p id="display-giao-hang">Giao hàng tận nơi trong khu vực Vĩnh Long. Phí ship 25,000 VND. Miễn phí ship cho đơn hàng từ 500,000 VND.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <span class="text-xl mr-2">🔒</span>
+                            Chính sách bảo mật
+                        </h4>
+                        <div class="text-gray-600 text-sm bg-gray-50 p-4 rounded-lg">
+                            <p id="display-bao-mat">Cam kết bảo mật thông tin cá nhân của khách hàng. Không chia sẻ thông tin cho bên thứ ba khi chưa có sự đồng ý.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="admin-auth.js"></script>
+    <script>
+        let currentSettings = {};
+
+        // Load settings
+        async function loadSettings() {
+            try {
+                console.log('Loading settings...');
+                const response = await apiCall('/settings');
+                currentSettings = response.data;
+                
+                // Update display cards
+                updateDisplayCards();
+                
+                console.log('Settings loaded successfully');
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                // If no settings exist, show default values
+                if (error.message.includes('404')) {
+                    console.log('No settings found, showing default values');
+                    showDefaultValues();
+                } else {
+                    alert('Lỗi tải cài đặt: ' + error.message);
+                }
+            }
+        }
+
+        // Show default values when no settings exist
+        function showDefaultValues() {
+            // Keep the default values already in HTML
+            console.log('Showing default values');
+        }
+
+        // Update display cards with current data
+        function updateDisplayCards() {
+            // Update address
+            const addressDisplay = document.getElementById('display-dia-chi');
+            if (addressDisplay && currentSettings.dia_chi) {
+                addressDisplay.innerHTML = currentSettings.dia_chi.replace(/\n/g, '<br>');
+            }
+
+            // Update phone numbers
+            const hotlineDisplay = document.getElementById('display-hotline');
+            if (hotlineDisplay && currentSettings.hotline) {
+                hotlineDisplay.textContent = currentSettings.hotline;
+            }
+
+            const phoneDisplay = document.getElementById('display-so-dien-thoai');
+            if (phoneDisplay && currentSettings.so_dien_thoai) {
+                phoneDisplay.textContent = currentSettings.so_dien_thoai;
+            }
+
+            // Update email
+            const emailDisplay = document.getElementById('display-email');
+            if (emailDisplay && currentSettings.email) {
+                emailDisplay.textContent = currentSettings.email;
+            }
+
+            // Update working hours
+            const workingHoursDisplay = document.getElementById('display-gio-lam-viec');
+            if (workingHoursDisplay && currentSettings.gio_lam_viec) {
+                workingHoursDisplay.innerHTML = currentSettings.gio_lam_viec.replace(/\n/g, '<br>');
+            }
+
+            // Update website info
+            const websiteNameDisplay = document.getElementById('display-ten-website');
+            if (websiteNameDisplay && currentSettings.ten_website) {
+                websiteNameDisplay.textContent = currentSettings.ten_website;
+            }
+
+            const companyNameDisplay = document.getElementById('display-ten-cong-ty');
+            if (companyNameDisplay && currentSettings.ten_cong_ty) {
+                companyNameDisplay.textContent = currentSettings.ten_cong_ty;
+            }
+
+            const taxCodeDisplay = document.getElementById('display-ma-so-thue');
+            if (taxCodeDisplay && currentSettings.ma_so_thue) {
+                taxCodeDisplay.textContent = currentSettings.ma_so_thue;
+            }
+
+            // Update social media
+            const facebookDisplay = document.getElementById('display-facebook');
+            if (facebookDisplay && currentSettings.facebook_url) {
+                facebookDisplay.textContent = currentSettings.facebook_url.replace('https://facebook.com/', '@');
+            }
+
+            const instagramDisplay = document.getElementById('display-instagram');
+            if (instagramDisplay && currentSettings.instagram_url) {
+                instagramDisplay.textContent = currentSettings.instagram_url.replace('https://instagram.com/', '@');
+            }
+
+            const youtubeDisplay = document.getElementById('display-youtube');
+            if (youtubeDisplay && currentSettings.youtube_url) {
+                youtubeDisplay.textContent = 'Orianna Channel';
+            }
+
+            // Update business info
+            const licenseDisplay = document.getElementById('display-giay-phep');
+            if (licenseDisplay && currentSettings.giay_phep_kinh_doanh) {
+                licenseDisplay.textContent = currentSettings.giay_phep_kinh_doanh;
+            }
+
+            const shippingFeeDisplay = document.getElementById('display-phi-ship');
+            if (shippingFeeDisplay && currentSettings.phi_ship_toi_thieu) {
+                shippingFeeDisplay.textContent = new Intl.NumberFormat('vi-VN').format(currentSettings.phi_ship_toi_thieu) + ' VND';
+            }
+            }
+
+            // Update features
+            for (let i = 1; i <= 4; i++) {
+                const iconDisplay = document.getElementById(`display-feature-${i}-icon`);
+                const titleDisplay = document.getElementById(`display-feature-${i}-title`);
+                const descDisplay = document.getElementById(`display-feature-${i}-desc`);
+
+                if (iconDisplay && currentSettings[`tinh_nang_${i}_icon`]) {
+                    iconDisplay.textContent = currentSettings[`tinh_nang_${i}_icon`];
+                }
+                if (titleDisplay && currentSettings[`tinh_nang_${i}_tieu_de`]) {
+                    titleDisplay.textContent = currentSettings[`tinh_nang_${i}_tieu_de`];
+                }
+                if (descDisplay && currentSettings[`tinh_nang_${i}_mo_ta`]) {
+                    descDisplay.textContent = currentSettings[`tinh_nang_${i}_mo_ta`];
+                }
+            }
+
+            // Update policies
+            const warrantyDisplay = document.getElementById('display-bao-hanh');
+            if (warrantyDisplay && currentSettings.chinh_sach_bao_hanh) {
+                warrantyDisplay.textContent = currentSettings.chinh_sach_bao_hanh;
+            }
+
+            const returnDisplay = document.getElementById('display-doi-tra');
+            if (returnDisplay && currentSettings.chinh_sach_doi_tra) {
+                returnDisplay.textContent = currentSettings.chinh_sach_doi_tra;
+            }
+
+            const shippingDisplay = document.getElementById('display-giao-hang');
+            if (shippingDisplay && currentSettings.chinh_sach_giao_hang) {
+                shippingDisplay.textContent = currentSettings.chinh_sach_giao_hang;
+            }
+
+            const privacyDisplay = document.getElementById('display-bao-mat');
+            if (privacyDisplay && currentSettings.chinh_sach_bao_mat) {
+                privacyDisplay.textContent = currentSettings.chinh_sach_bao_mat;
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+        });
+    </script>
+</body>
+</html>

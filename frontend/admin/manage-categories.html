@@ -5,27 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Danh mục - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="admin-styles.css">
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { primary: '#06B6D4' } } }
+            theme: { extend: { colors: { primary: '#06B6D4', sidebar: '#1e293b' } } }
         }
     </script>
 </head>
-<body class="bg-gray-50">
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-gray-800 text-white">
-            <div class="p-6 border-b border-gray-700">
-                <div class="flex items-center space-x-3 mb-2">
-                    <span class="text-3xl">🔐</span>
-                    <h1 class="text-2xl font-bold">Orianna<br>Admin</h1>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center space-x-3 mb-8">
+                    <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                    <div>
+                        <h2 class="text-xl font-bold">Orianna Admin</h2>
+                        <p class="text-gray-400 text-sm">Quản trị viên</p>
+                    </div>
                 </div>
-                <p class="text-sm text-gray-400">Quản trị viên</p>
             </div>
-            <nav class="px-4">
+            
+            <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
                 <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">📊</span>
-                    <span>Dashboard</span>
+                    <span>Tổng quan</span>
                 </a>
                 <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">📦</span>
@@ -35,49 +39,65 @@
                     <span class="text-xl">🛒</span>
                     <span>Đơn hàng</span>
                 </a>
-                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-gray-700 mb-2">
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
                     <span class="text-xl">🏷️</span>
                     <span>Danh mục</span>
                 </a>
-                <a href="#" onclick="alert('Chức năng đang phát triển'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 opacity-50">
+                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📰</span>
+                    <span>Tin tức</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">👥</span>
                     <span>Khách hàng</span>
                 </a>
-                <a href="#" onclick="alert('Chức năng đang phát triển'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 opacity-50">
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">⚙️</span>
                     <span>Cài đặt</span>
                 </a>
-                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 mt-8">
-                    <span class="text-xl">🏠</span>
-                    <span>Về trang chủ</span>
-                </a>
-                <button onclick="logout()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-red-700 bg-red-600 mb-2 mt-2">
-                    <span class="text-xl">🚪</span>
-                    <span>Đăng xuất</span>
-                </button>
+            </div>
+                
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                    <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                        <span class="text-xl">🏠</span>
+                        <span>Về trang chủ</span>
+                    </a>
+                    <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                        <span class="text-xl">🚪</span>
+                        <span>Đăng xuất</span>
+                    </button>
+                </div>
             </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8">
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold mb-2">Quản lý Danh mục</h2>
-                <p class="text-gray-600">Quản lý các thương hiệu nước hoa</p>
-            </div>
+        <div class="flex-1 flex flex-col ml-64">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Quản lý Danh mục</h2>
+                    <button onclick="showAddModal()" class="bg-primary hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium">
+                        ➕ Thêm Danh mục
+                    </button>
+                </div>
+            </header>
 
-            <!-- Add Category Button -->
-            <div class="mb-6">
-                <button onclick="showAddModal()" class="bg-primary hover:bg-cyan-600 text-white px-6 py-3 rounded-lg font-semibold">
-                    + Thêm Danh mục
-                </button>
-            </div>
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="mb-6">
+                    <p class="text-gray-600">Quản lý các thương hiệu nước hoa</p>
+                </div>
 
-            <!-- Categories Table -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
+                <!-- Categories Table -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Tên Danh mục</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Slug</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Mô tả</th>
@@ -92,8 +112,8 @@
                     </tbody>
                 </table>
             </div>
-        </main>
-    </div>
+            </main>
+        </div>
 
     <!-- Add/Edit Modal -->
     <div id="category-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -236,17 +256,11 @@
             try {
                 if (categoryId) {
                     // Update
-                    await apiCall(`/categories/${categoryId}`, {
-                        method: 'PUT',
-                        body: JSON.stringify(formData)
-                    });
+                    await apiCall(`/categories/${categoryId}`, 'PUT', formData);
                     alert('Cập nhật danh mục thành công!');
                 } else {
                     // Create
-                    await apiCall('/categories', {
-                        method: 'POST',
-                        body: JSON.stringify(formData)
-                    });
+                    await apiCall('/categories', 'POST', formData);
                     alert('Thêm danh mục thành công!');
                 }
                 
@@ -262,7 +276,7 @@
             if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
 
             try {
-                await apiCall(`/categories/${id}`, { method: 'DELETE' });
+                await apiCall(`/categories/${id}`, 'DELETE');
                 alert('Xóa danh mục thành công!');
                 loadCategories();
             } catch (error) {

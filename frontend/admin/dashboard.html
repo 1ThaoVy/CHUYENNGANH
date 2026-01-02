@@ -5,22 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Orianna Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
-            theme: { extend: { colors: { primary: '#06B6D4', sidebar: '#1e293b' } } }
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
         }
     </script>
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-sidebar text-white flex-shrink-0">
-            <div class="p-6 border-b border-gray-700">
-                <h1 class="text-2xl font-bold">🛍️ Orianna Admin</h1>
-                <p class="text-sm text-gray-400 mt-1">Quản trị viên</p>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold">Orianna Admin</h2>
+                    <p class="text-gray-400 text-sm">Quản trị viên</p>
+                </div>
             </div>
-            
-            <nav class="p-4">
+        </div>
+        
+        <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
                 <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
                     <span class="text-xl">📊</span>
                     <span>Tổng quan</span>
@@ -37,45 +43,78 @@
                     <span class="text-xl">🏷️</span>
                     <span>Danh mục</span>
                 </a>
-                <a href="#" onclick="alert('Chức năng đang phát triển'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 opacity-50">
+                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📰</span>
+                    <span>Tin tức</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">👥</span>
                     <span>Khách hàng</span>
                 </a>
-                <a href="#" onclick="alert('Chức năng đang phát triển'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2 opacity-50">
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">⚙️</span>
                     <span>Cài đặt</span>
                 </a>
-                
-                <div class="border-t border-gray-700 mt-4 pt-4">
-                    <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
-                        <span class="text-xl">🏠</span>
-                        <span>Về trang chủ</span>
-                    </a>
-                    <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-red-600 w-full text-left">
-                        <span class="text-xl">🚪</span>
-                        <span>Đăng xuất</span>
-                    </button>
-                </div>
-            </nav>
-        </aside>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Bar -->
-            <header class="bg-white shadow-sm">
-                <div class="flex items-center justify-between px-6 py-4">
-                    <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-gray-600">Xin chào, <strong id="admin-name"></strong></span>
-                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                            A
-                        </div>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                    <p class="text-gray-600 text-sm">Tổng quan hệ thống</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Xin chào, <span id="admin-name" class="font-medium">Admin</span></span>
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                        A
                     </div>
                 </div>
-            </header>
+            </div>
+        </header>
 
-            <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-6">
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            <!-- Global Revenue Filter -->
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                    <p class="text-gray-600 text-sm">Tổng quan hệ thống</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium text-gray-700">Thời gian:</span>
+                        <select id="global-revenue-filter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white shadow-sm">
+                            <option value="day">7 ngày qua</option>
+                            <option value="week">4 tuần qua</option>
+                            <option value="month" selected>12 tháng qua</option>
+                            <option value="year">5 năm qua</option>
+                        </select>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Cập nhật: <span id="last-updated">Hôm nay</span>
+                    </div>
+                </div>
+            </div>
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
@@ -124,6 +163,280 @@
                 </div>
 
                 <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Revenue Chart -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 id="revenue-chart-title" class="text-lg font-bold mb-4">Doanh thu 12 tháng qua</h3>
+                        <div id="main-revenue-chart" class="h-64 flex items-end justify-between space-x-2">
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 60px;"></div>
+                                <span class="text-xs text-gray-600">T1</span>
+                                <span class="text-xs font-bold">15M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 95px;"></div>
+                                <span class="text-xs text-gray-600">T2</span>
+                                <span class="text-xs font-bold">18M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 75px;"></div>
+                                <span class="text-xs text-gray-600">T3</span>
+                                <span class="text-xs font-bold">22M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 125px;"></div>
+                                <span class="text-xs text-gray-600">T4</span>
+                                <span class="text-xs font-bold">25M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 110px;"></div>
+                                <span class="text-xs text-gray-600">T5</span>
+                                <span class="text-xs font-bold">28M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 150px;"></div>
+                                <span class="text-xs text-gray-600">T6</span>
+                                <span class="text-xs font-bold">32M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 140px;"></div>
+                                <span class="text-xs text-gray-600">T7</span>
+                                <span class="text-xs font-bold">29M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 155px;"></div>
+                                <span class="text-xs text-gray-600">T8</span>
+                                <span class="text-xs font-bold">31M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 170px;"></div>
+                                <span class="text-xs text-gray-600">T9</span>
+                                <span class="text-xs font-bold">34M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 185px;"></div>
+                                <span class="text-xs text-gray-600">T10</span>
+                                <span class="text-xs font-bold">37M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 175px;"></div>
+                                <span class="text-xs text-gray-600">T11</span>
+                                <span class="text-xs font-bold">35M</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="bg-blue-500 rounded-t w-8 mb-2" style="height: 200px;"></div>
+                                <span class="text-xs text-gray-600">T12</span>
+                                <span class="text-xs font-bold">40M</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Chart -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-bold mb-4">Đơn hàng theo trạng thái</h3>
+                        <div class="h-64 flex flex-col justify-center">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-4 h-4 bg-yellow-400 rounded-full"></div>
+                                        <span class="text-sm">Chờ xử lý</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="bg-yellow-100 rounded-full h-2 w-24">
+                                            <div class="bg-yellow-400 h-2 rounded-full" style="width: 60%;"></div>
+                                        </div>
+                                        <span class="text-sm font-bold">12</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-4 h-4 bg-blue-400 rounded-full"></div>
+                                        <span class="text-sm">Đã xác nhận</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="bg-blue-100 rounded-full h-2 w-24">
+                                            <div class="bg-blue-400 h-2 rounded-full" style="width: 40%;"></div>
+                                        </div>
+                                        <span class="text-sm font-bold">8</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-4 h-4 bg-purple-400 rounded-full"></div>
+                                        <span class="text-sm">Đang giao</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="bg-purple-100 rounded-full h-2 w-24">
+                                            <div class="bg-purple-400 h-2 rounded-full" style="width: 75%;"></div>
+                                        </div>
+                                        <span class="text-sm font-bold">15</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-4 h-4 bg-green-400 rounded-full"></div>
+                                        <span class="text-sm">Hoàn thành</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="bg-green-100 rounded-full h-2 w-24">
+                                            <div class="bg-green-400 h-2 rounded-full" style="width: 90%;"></div>
+                                        </div>
+                                        <span class="text-sm font-bold">45</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-4 h-4 bg-red-400 rounded-full"></div>
+                                        <span class="text-sm">Đã hủy</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="bg-red-100 rounded-full h-2 w-24">
+                                            <div class="bg-red-400 h-2 rounded-full" style="width: 15%;"></div>
+                                        </div>
+                                        <span class="text-sm font-bold">3</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Revenue Filter Chart -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 id="detailed-revenue-title" class="text-lg font-bold mb-4">Chi tiết doanh thu theo tháng</h3>
+                        <div class="h-64">
+                            <div id="detailed-revenue-chart" class="h-full">
+                                <!-- Detailed revenue chart will be rendered here -->
+                                <div class="flex justify-between items-end h-48 space-x-2">
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 80px;"></div>
+                                        <span class="text-xs text-gray-600">T1</span>
+                                        <span class="text-xs font-bold">15M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 95px;"></div>
+                                        <span class="text-xs text-gray-600">T2</span>
+                                        <span class="text-xs font-bold">18M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 110px;"></div>
+                                        <span class="text-xs text-gray-600">T3</span>
+                                        <span class="text-xs font-bold">22M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 125px;"></div>
+                                        <span class="text-xs text-gray-600">T4</span>
+                                        <span class="text-xs font-bold">25M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 140px;"></div>
+                                        <span class="text-xs text-gray-600">T5</span>
+                                        <span class="text-xs font-bold">28M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 160px;"></div>
+                                        <span class="text-xs text-gray-600">T6</span>
+                                        <span class="text-xs font-bold">32M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 145px;"></div>
+                                        <span class="text-xs text-gray-600">T7</span>
+                                        <span class="text-xs font-bold">29M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 155px;"></div>
+                                        <span class="text-xs text-gray-600">T8</span>
+                                        <span class="text-xs font-bold">31M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 170px;"></div>
+                                        <span class="text-xs text-gray-600">T9</span>
+                                        <span class="text-xs font-bold">34M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 185px;"></div>
+                                        <span class="text-xs text-gray-600">T10</span>
+                                        <span class="text-xs font-bold">37M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 175px;"></div>
+                                        <span class="text-xs text-gray-600">T11</span>
+                                        <span class="text-xs font-bold">35M</span>
+                                    </div>
+                                    <div class="flex flex-col items-center space-y-1">
+                                        <div class="bg-gradient-to-t from-primary to-blue-400 rounded-t w-8" style="height: 200px;"></div>
+                                        <span class="text-xs text-gray-600">T12</span>
+                                        <span class="text-xs font-bold">40M</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <div class="inline-flex items-center space-x-4 text-sm text-gray-600">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-gradient-to-t from-primary to-blue-400 rounded"></div>
+                                            <span>Doanh thu chi tiết</span>
+                                        </div>
+                                        <div class="text-primary font-semibold">
+                                            Tổng: <span id="detailed-total-revenue">365M VNĐ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Growth Chart -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-bold mb-4">Tăng trưởng theo tháng</h3>
+                        <div class="h-64">
+                            <div class="flex justify-between items-end h-48 space-x-1">
+                                <div class="flex flex-col items-center space-y-1">
+                                    <div class="bg-green-400 rounded-t w-4" style="height: 65px;"></div>
+                                    <div class="bg-purple-400 rounded-t w-4" style="height: 28px;"></div>
+                                    <span class="text-xs">T1</span>
+                                </div>
+                                <div class="flex flex-col items-center space-y-1">
+                                    <div class="bg-green-400 rounded-t w-4" style="height: 78px;"></div>
+                                    <div class="bg-purple-400 rounded-t w-4" style="height: 35px;"></div>
+                                    <span class="text-xs">T2</span>
+                                </div>
+                                <div class="flex flex-col items-center space-y-1">
+                                    <div class="bg-green-400 rounded-t w-4" style="height: 85px;"></div>
+                                    <div class="bg-purple-400 rounded-t w-4" style="height: 42px;"></div>
+                                    <span class="text-xs">T3</span>
+                                </div>
+                                <div class="flex flex-col items-center space-y-1">
+                                    <div class="bg-green-400 rounded-t w-4" style="height: 92px;"></div>
+                                    <div class="bg-purple-400 rounded-t w-4" style="height: 48px;"></div>
+                                    <span class="text-xs">T4</span>
+                                </div>
+                                <div class="flex flex-col items-center space-y-1">
+                                    <div class="bg-green-400 rounded-t w-4" style="height: 88px;"></div>
+                                    <div class="bg-purple-400 rounded-t w-4" style="height: 45px;"></div>
+                                    <span class="text-xs">T5</span>
+                                </div>
+                                <div class="flex flex-col items-center space-y-1">
+                                    <div class="bg-green-400 rounded-t w-4" style="height: 95px;"></div>
+                                    <div class="bg-purple-400 rounded-t w-4" style="height: 52px;"></div>
+                                    <span class="text-xs">T6</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-center space-x-6 mt-4">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-green-400 rounded"></div>
+                                    <span class="text-sm">Doanh thu</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-purple-400 rounded"></div>
+                                    <span class="text-sm">Đơn hàng</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <!-- Recent Orders -->
                     <div class="bg-white rounded-xl shadow-md p-6">

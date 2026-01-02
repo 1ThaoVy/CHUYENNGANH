@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Flash Sale - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold">Orianna Admin</h2>
+                    <p class="text-gray-400 text-sm">Quản trị viên</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
+                <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📦</span>
+                    <span>Sản phẩm</span>
+                </a>
+                <a href="orders.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏷️</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📰</span>
+                    <span>Tin tức</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">👥</span>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Flash Sale</h1>
+                    <p class="text-gray-600 text-sm">Quản lý các chương trình Flash Sale</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Xin chào, <span id="admin-name" class="font-medium">Admin</span></span>
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">Danh sách Flash Sale</h2>
+                        <p class="text-gray-600 text-sm">Tạo và quản lý các chương trình Flash Sale</p>
+                    </div>
+                    <button onclick="showCreateModal()" class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                        <span>+</span>
+                        <span>Tạo Flash Sale</span>
+                    </button>
+                </div>
+
+                <!-- Flash Sale List -->
+                <div id="flash-sale-list" class="space-y-4">
+                    <div class="text-center py-8">Đang tải...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Flash Sale Modal -->
+    <div id="flash-sale-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="modal-title" class="text-xl font-bold">Tạo Flash Sale</h2>
+                    <button onclick="hideModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="flash-sale-form" onsubmit="saveFlashSale(event)">
+                    <input type="hidden" id="flash-sale-id">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Mã Code *</label>
+                            <input type="text" id="ma-code" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Màu nền</label>
+                            <select id="mau-nen" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="gradient-to-r from-red-500 to-pink-600">Đỏ - Hồng</option>
+                                <option value="gradient-to-r from-purple-500 to-blue-600">Tím - Xanh</option>
+                                <option value="gradient-to-r from-green-500 to-teal-600">Xanh lá - Xanh ngọc</option>
+                                <option value="gradient-to-r from-orange-500 to-red-600">Cam - Đỏ</option>
+                                <option value="gradient-to-r from-pink-500 to-purple-600">Hồng - Tím</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Tiêu đề *</label>
+                        <input type="text" id="tieu-de" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Mô tả</label>
+                        <textarea id="mo-ta" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Thời gian bắt đầu *</label>
+                            <input type="datetime-local" id="ngay-bat-dau" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Thời gian kết thúc *</label>
+                            <input type="datetime-local" id="ngay-ket-thuc" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Trạng thái</label>
+                            <select id="trang-thai" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Tạm dừng</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="hien-thi-banner" class="w-4 h-4 text-primary">
+                                <span class="text-sm font-medium">Hiển thị banner trên trang chủ</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="hideModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Hủy
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">
+                            Lưu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        let flashSales = [];
+
+        // Load flash sales
+        async function loadFlashSales() {
+            try {
+                const data = await apiCall('/flash-sale', 'GET', null, true);
+                flashSales = data.data;
+                renderFlashSales();
+            } catch (error) {
+                console.error('Error loading flash sales:', error);
+                document.getElementById('flash-sale-list').innerHTML = '<div class="text-center text-red-500 py-8">Lỗi tải dữ liệu</div>';
+            }
+        }
+
+        // Render flash sales
+        function renderFlashSales() {
+            const container = document.getElementById('flash-sale-list');
+            
+            if (flashSales.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-8">Chưa có flash sale nào</div>';
+                return;
+            }
+
+            container.innerHTML = flashSales.map(flashSale => {
+                const startTime = new Date(flashSale.ngay_bat_dau);
+                const endTime = new Date(flashSale.ngay_ket_thuc);
+                const now = new Date();
+                
+                let statusClass = 'bg-gray-100 text-gray-600';
+                let statusText = 'Chưa bắt đầu';
+                
+                if (flashSale.trang_thai === 'inactive') {
+                    statusClass = 'bg-red-100 text-red-600';
+                    statusText = 'Tạm dừng';
+                } else if (now >= startTime && now <= endTime) {
+                    statusClass = 'bg-green-100 text-green-600';
+                    statusText = 'Đang diễn ra';
+                } else if (now > endTime) {
+                    statusClass = 'bg-gray-100 text-gray-600';
+                    statusText = 'Đã kết thúc';
+                }
+
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-lg mb-1">${flashSale.tieu_de_flash_sale || flashSale.ma_code}</h3>
+                                <p class="text-gray-600 text-sm mb-2">${flashSale.mo_ta_flash_sale || 'Không có mô tả'}</p>
+                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <span>📅 ${formatDateTime(flashSale.ngay_bat_dau)} - ${formatDateTime(flashSale.ngay_ket_thuc)}</span>
+                                    <span>🛍️ ${flashSale.so_luong_san_pham} sản phẩm</span>
+                                    <span>🏷️ ${flashSale.ma_code}</span>
+                                    ${flashSale.hien_thi_banner ? '<span class="text-green-600">📺 Banner</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end gap-2">
+                            <button onclick="editFlashSale(${flashSale.ma_giam_gia_id})" class="text-blue-600 hover:text-blue-800 text-sm">
+                                Sửa
+                            </button>
+                            <button onclick="deleteFlashSale(${flashSale.ma_giam_gia_id})" class="text-red-600 hover:text-red-800 text-sm">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Show create modal
+        function showCreateModal() {
+            document.getElementById('modal-title').textContent = 'Tạo Flash Sale';
+            document.getElementById('flash-sale-form').reset();
+            document.getElementById('flash-sale-id').value = '';
+            
+            // Set default times
+            const now = new Date();
+            const start = new Date(now.getTime() + 60000); // 1 minute from now
+            const end = new Date(now.getTime() + 9 * 60 * 60 * 1000); // 9 hours from now
+            
+            document.getElementById('ngay-bat-dau').value = formatDateTimeLocal(start);
+            document.getElementById('ngay-ket-thuc').value = formatDateTimeLocal(end);
+            
+            document.getElementById('flash-sale-modal').classList.remove('hidden');
+        }
+
+        // Edit flash sale
+        function editFlashSale(id) {
+            const flashSale = flashSales.find(fs => fs.ma_giam_gia_id === id);
+            if (!flashSale) return;
+
+            document.getElementById('modal-title').textContent = 'Sửa Flash Sale';
+            document.getElementById('flash-sale-id').value = flashSale.ma_giam_gia_id;
+            document.getElementById('ma-code').value = flashSale.ma_code;
+            document.getElementById('tieu-de').value = flashSale.tieu_de_flash_sale || '';
+            document.getElementById('mo-ta').value = flashSale.mo_ta_flash_sale || '';
+            document.getElementById('mau-nen').value = flashSale.mau_nen_flash_sale || 'gradient-to-r from-red-500 to-pink-600';
+            document.getElementById('ngay-bat-dau').value = formatDateTimeLocal(new Date(flashSale.ngay_bat_dau));
+            document.getElementById('ngay-ket-thuc').value = formatDateTimeLocal(new Date(flashSale.ngay_ket_thuc));
+            document.getElementById('trang-thai').value = flashSale.trang_thai;
+            document.getElementById('hien-thi-banner').checked = flashSale.hien_thi_banner;
+
+            document.getElementById('flash-sale-modal').classList.remove('hidden');
+        }
+
+        // Save flash sale
+        async function saveFlashSale(event) {
+            event.preventDefault();
+            
+            const id = document.getElementById('flash-sale-id').value;
+            const data = {
+                ma_code: document.getElementById('ma-code').value,
+                tieu_de_flash_sale: document.getElementById('tieu-de').value,
+                mo_ta_flash_sale: document.getElementById('mo-ta').value,
+                mau_nen_flash_sale: document.getElementById('mau-nen').value,
+                ngay_bat_dau: document.getElementById('ngay-bat-dau').value,
+                ngay_ket_thuc: document.getElementById('ngay-ket-thuc').value,
+                trang_thai: document.getElementById('trang-thai').value,
+                hien_thi_banner: document.getElementById('hien-thi-banner').checked
+            };
+
+            try {
+                if (id) {
+                    await apiCall(`/flash-sale/${id}`, 'PUT', data, true);
+                    alert('Cập nhật flash sale thành công!');
+                } else {
+                    await apiCall('/flash-sale', 'POST', data, true);
+                    alert('Tạo flash sale thành công!');
+                }
+                
+                hideModal();
+                loadFlashSales();
+            } catch (error) {
+                console.error('Error saving flash sale:', error);
+                alert('Có lỗi xảy ra: ' + (error.message || 'Vui lòng thử lại'));
+            }
+        }
+
+        // Delete flash sale
+        async function deleteFlashSale(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa flash sale này?')) return;
+
+            try {
+                await apiCall(`/flash-sale/${id}`, 'DELETE', null, true);
+                alert('Xóa flash sale thành công!');
+                loadFlashSales();
+            } catch (error) {
+                console.error('Error deleting flash sale:', error);
+                alert('Có lỗi xảy ra: ' + (error.message || 'Vui lòng thử lại'));
+            }
+        }
+
+        // Hide modal
+        function hideModal() {
+            document.getElementById('flash-sale-modal').classList.add('hidden');
+        }
+
+        // Format datetime for input
+        function formatDateTimeLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Format datetime for display
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('vi-VN');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadFlashSales();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('flash-sale-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal();
+            }
+        });
+    </script>
+</body>
+</html>
