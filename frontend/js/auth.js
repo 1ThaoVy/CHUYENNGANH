@@ -6,11 +6,23 @@ function checkAuth() {
     const userMenu = document.getElementById('user-menu');
     const guestMenu = document.getElementById('guest-menu');
     const userName = document.getElementById('user-name');
+    const userAvatarNav = document.getElementById('user-avatar-nav');
 
     if (token && user) {
         if (userMenu) userMenu.classList.remove('hidden');
         if (guestMenu) guestMenu.classList.add('hidden');
-        if (userName) userName.textContent = `Xin chào, ${user.ho_ten}`;
+        
+        // Update user name
+        if (userName) {
+            const displayName = user.ho_ten || user.fullname || user.email || 'Người dùng';
+            userName.textContent = displayName;
+        }
+        
+        // Update avatar
+        if (userAvatarNav) {
+            const displayName = user.ho_ten || user.fullname || user.email || 'U';
+            userAvatarNav.textContent = displayName.charAt(0).toUpperCase();
+        }
         
         // Show admin link if user is admin
         const adminLink = document.getElementById('admin-link');
