@@ -105,3 +105,87 @@ exports.getMe = async (req, res) => {
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
+
+// Lấy thông tin profile
+exports.getProfile = async (req, res) => {
+  try {
+    const [users] = await db.query(
+      'SELECT nguoi_dung_id as id, ho_ten as fullname, email, so_dien_thoai as phone, dia_chi as address, vai_tro, ngay_tao FROM nguoi_dung WHERE nguoi_dung_id = ?',
+      [req.user.nguoi_dung_id]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+    }
+
+    res.json(users[0]);
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+  }
+};
+
+// Cập nhật thông tin profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const { fullname, phone, address } = req.body;
+    const userId = req.user.nguoi_dung_id;
+
+    // Cập nhật thông tin
+    await db.query(
+      'UPDATE nguoi_dung SET ho_ten = ?, so_dien_thoai = ?, dia_chi = ? WHERE nguoi_dung_id = ?',
+      [fullname, phone, address, userId]
+    );
+
+    // Lấy thông tin đã cập nhật
+    const [users] = await db.query(
+      'SELECT nguoi_dung_id as id, ho_ten as fullname, email, so_dien_thoai as phone, dia_chi as address FROM nguoi_dung WHERE nguoi_dung_id = ?',
+      [userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Cập nhật thông tin thành công',
+      ...users[0]
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+  }
+};
+
+// Đổi mật khẩu
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.nguoi_dung_id;
+
+    // Lấy thông tin user hiện tại
+    const [users] = await db.query('SELECT mat_khau_hash FROM nguoi_dung WHERE nguoi_dung_id = ?', [userId]);
+    
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+    }
+
+    // Kiểm tra mật khẩu hiện tại
+    const isMatch = await bcrypt.compare(currentPassword, users[0].mat_khau_hash);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại không đúng' });
+    }
+
+    // Mã hóa mật khẩu mới
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+
+    // Cập nhật mật khẩu
+    await db.query(
+      'UPDATE nguoi_dung SET mat_khau_hash = ? WHERE nguoi_dung_id = ?',
+      [newPasswordHash, userId]
+    );
+
+    res.json({
+      success: true,
+      message: 'Đổi mật khẩu thành công'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+  }
+};

@@ -42,10 +42,10 @@ exports.getProducts = async (req, res) => {
       query += ' ORDER BY sp.ngay_tao DESC';
     }
 
-    query += ' LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), parseInt(offset));
+    // Thêm LIMIT và OFFSET trực tiếp vào query string
+    query += ` LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`;
 
-    const [products] = await db.query(query, params);
+    const [products] = await db.execute(query, params);
 
     // Đếm tổng số sản phẩm
     let countQuery = 'SELECT COUNT(*) as total FROM san_pham WHERE trang_thai_hien_thi = 1';
@@ -62,7 +62,7 @@ exports.getProducts = async (req, res) => {
       countQuery += ' AND phan_tram_giam_gia > 0';
     }
 
-    const [countResult] = await db.query(countQuery, countParams);
+    const [countResult] = await db.execute(countQuery, countParams);
     const total = countResult[0].total;
 
     res.json({
@@ -76,6 +76,7 @@ exports.getProducts = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Error getting products:', error);
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
@@ -85,7 +86,7 @@ exports.getProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [products] = await db.query(`
+    const [products] = await db.execute(`
       SELECT sp.*, dm.ten_danh_muc, dm.slug as danh_muc_slug
       FROM san_pham sp
       LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.danh_muc_id
@@ -97,7 +98,7 @@ exports.getProduct = async (req, res) => {
     }
 
     // Lấy đánh giá của sản phẩm
-    const [reviews] = await db.query(`
+    const [reviews] = await db.execute(`
       SELECT dg.*, nd.ho_ten
       FROM danh_gia_san_pham dg
       JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.nguoi_dung_id
@@ -113,6 +114,7 @@ exports.getProduct = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Error getting product:', error);
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
@@ -120,11 +122,30 @@ exports.getProduct = async (req, res) => {
 // Tạo sản phẩm mới (Admin only)
 exports.createProduct = async (req, res) => {
   try {
-    const { danh_muc_id, ten_san_pham, mo_ta, gia_ban, so_luong_ton, dung_tich, url_hinh_anh_chinh } = req.body;
+    const { 
+      danh_muc_id, 
+      ten_san_pham, 
+      mo_ta, 
+      gia_ban, 
+      so_luong_ton, 
+      dung_tich, 
+      url_hinh_anh_chinh,
+      phan_tram_giam_gia = 0
+    } = req.body;
 
-    const [result] = await db.query(
-      'INSERT INTO san_pham (danh_muc_id, ten_san_pham, mo_ta, gia_ban, so_luong_ton, dung_tich, url_hinh_anh_chinh) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [danh_muc_id, ten_san_pham, mo_ta, gia_ban, so_luong_ton, dung_tich, url_hinh_anh_chinh]
+    if (!ten_san_pham || !gia_ban || !danh_muc_id) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Thiếu thông tin bắt buộc' 
+      });
+    }
+
+    const [result] = await db.execute(
+      `INSERT INTO san_pham (
+        danh_muc_id, ten_san_pham, mo_ta, gia_ban, so_luong_ton, 
+        dung_tich, url_hinh_anh_chinh, phan_tram_giam_gia
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [danh_muc_id, ten_san_pham, mo_ta, gia_ban, so_luong_ton || 0, dung_tich, url_hinh_anh_chinh, phan_tram_giam_gia]
     );
 
     res.status(201).json({
@@ -133,6 +154,7 @@ exports.createProduct = async (req, res) => {
       data: { san_pham_id: result.insertId }
     });
   } catch (error) {
+    console.error('Error creating product:', error);
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
@@ -143,24 +165,65 @@ exports.updateProduct = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
+    // Kiểm tra sản phẩm tồn tại
+    const [existing] = await db.execute(
+      'SELECT san_pham_id FROM san_pham WHERE san_pham_id = ?',
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Không tìm thấy sản phẩm' 
+      });
+    }
+
+    // Loại bỏ các field không được phép cập nhật
+    delete updates.san_pham_id;
+    delete updates.ngay_tao;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Không có dữ liệu để cập nhật' 
+      });
+    }
+
     const fields = Object.keys(updates).map(key => `${key} = ?`).join(', ');
     const values = [...Object.values(updates), id];
 
-    await db.query(`UPDATE san_pham SET ${fields} WHERE san_pham_id = ?`, values);
+    await db.execute(`UPDATE san_pham SET ${fields} WHERE san_pham_id = ?`, values);
 
     res.json({ success: true, message: 'Cập nhật sản phẩm thành công' });
   } catch (error) {
+    console.error('Error updating product:', error);
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
 
-// Xóa sản phẩm (Admin only)
+// Xóa sản phẩm (Admin only) - Soft delete
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    await db.query('UPDATE san_pham SET trang_thai_hien_thi = 0 WHERE san_pham_id = ?', [id]);
+
+    // Kiểm tra sản phẩm tồn tại
+    const [existing] = await db.execute(
+      'SELECT san_pham_id FROM san_pham WHERE san_pham_id = ?',
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Không tìm thấy sản phẩm' 
+      });
+    }
+
+    await db.execute('UPDATE san_pham SET trang_thai_hien_thi = 0 WHERE san_pham_id = ?', [id]);
+    
     res.json({ success: true, message: 'Xóa sản phẩm thành công' });
   } catch (error) {
+    console.error('Error deleting product:', error);
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
