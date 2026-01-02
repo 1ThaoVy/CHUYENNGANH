@@ -97,19 +97,39 @@ CREATE TABLE `lich_su_chat` (
     FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung`(`nguoi_dung_id`)
 ) COMMENT='Lưu trữ lịch sử trò chuyện với Chatbot';
 
--- Bảng 8: DANH_GIA_SAN_PHAM (Đánh giá Sản phẩm)
+-- Bảng 8: TIN_TUC (Bài viết tin tức)
+CREATE TABLE `tin_tuc` (
+    `tin_tuc_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Tin tức',
+    `tieu_de` VARCHAR(255) NOT NULL COMMENT 'Tiêu đề bài viết',
+    `slug` VARCHAR(255) NOT NULL UNIQUE COMMENT 'Đường dẫn thân thiện',
+    `tom_tat` TEXT COMMENT 'Tóm tắt ngắn',
+    `noi_dung` LONGTEXT NOT NULL COMMENT 'Nội dung đầy đủ',
+    `hinh_anh_dai_dien` VARCHAR(255) COMMENT 'Ảnh đại diện bài viết',
+    `tac_gia_id` INT COMMENT 'ID Admin tạo bài',
+    `trang_thai` ENUM('ban_nhap', 'da_xuat_ban', 'an') NOT NULL DEFAULT 'ban_nhap' COMMENT 'Trạng thái bài viết',
+    `luot_xem` INT DEFAULT 0 COMMENT 'Số lượt xem',
+    `ngay_tao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày tạo',
+    `ngay_cap_nhat` DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT 'Ngày cập nhật',
+    FOREIGN KEY (`tac_gia_id`) REFERENCES `nguoi_dung`(`nguoi_dung_id`)
+) COMMENT='Bảng quản lý tin tức/bài viết';
+
+-- Bảng 9: DANH_GIA_SAN_PHAM (Đánh giá Sản phẩm - Cập nhật với điều kiện)
 CREATE TABLE `danh_gia_san_pham` (
     `danh_gia_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Đánh giá',
     `san_pham_id` INT COMMENT 'ID Sản phẩm được đánh giá',
     `nguoi_dung_id` INT COMMENT 'ID Khách hàng đánh giá',
+    `don_hang_id` INT COMMENT 'ID Đơn hàng đã mua sản phẩm này',
     `xep_hang` TINYINT NOT NULL COMMENT 'Số sao (1 đến 5)',
     `binh_luan` TEXT COMMENT 'Nội dung bình luận',
     `ngay_tao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày giờ tạo đánh giá',
+    `trang_thai` ENUM('hien_thi', 'an', 'cho_duyet') NOT NULL DEFAULT 'hien_thi' COMMENT 'Trạng thái hiển thị',
     FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham`(`san_pham_id`),
-    FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung`(`nguoi_dung_id`)
-) COMMENT='Lưu trữ đánh giá và xếp hạng sản phẩm';
+    FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung`(`nguoi_dung_id`),
+    FOREIGN KEY (`don_hang_id`) REFERENCES `don_hang`(`don_hang_id`),
+    UNIQUE KEY `unique_user_product_order` (`nguoi_dung_id`, `san_pham_id`, `don_hang_id`)
+) COMMENT='Lưu trữ đánh giá và xếp hạng sản phẩm với điều kiện đã mua';
 
--- Bảng 9: MA_GIAM_GIA (Mã Giảm giá)
+-- Bảng 10: MA_GIAM_GIA (Mã Giảm giá)
 CREATE TABLE `ma_giam_gia` (
     `ma_giam_gia_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Mã giảm giá',
     `ma_code` VARCHAR(50) NOT NULL UNIQUE COMMENT 'Mã Code',
@@ -122,7 +142,7 @@ CREATE TABLE `ma_giam_gia` (
     `trang_thai` ENUM('active', 'inactive') NOT NULL DEFAULT 'active' COMMENT 'Trạng thái mã giảm giá'
 ) COMMENT='Quản lý các mã giảm giá, khuyến mãi';
 
--- Bảng 10: LICH_SU_SU_DUNG_MA_GIAM_GIA
+-- Bảng 11: LICH_SU_SU_DUNG_MA_GIAM_GIA
 CREATE TABLE `lich_su_su_dung_ma_giam_gia` (
     `ls_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Lịch sử',
     `don_hang_id` INT NOT NULL UNIQUE COMMENT 'Đơn hàng đã sử dụng mã',
@@ -133,7 +153,7 @@ CREATE TABLE `lich_su_su_dung_ma_giam_gia` (
     FOREIGN KEY (`ma_giam_gia_id`) REFERENCES `ma_giam_gia`(`ma_giam_gia_id`)
 ) COMMENT='Lưu trữ lịch sử sử dụng Mã giảm giá';
 
--- Bảng 11: ALBUM_ANH (Quản lý Album Ảnh)
+-- Bảng 12: ALBUM_ANH (Quản lý Album Ảnh)
 CREATE TABLE `album_anh` (
     `album_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Album',
     `san_pham_id` INT COMMENT 'ID Sản phẩm',
@@ -143,7 +163,7 @@ CREATE TABLE `album_anh` (
     FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham`(`san_pham_id`)
 ) COMMENT='Quản lý các nhóm ảnh trên hệ thống';
 
--- Bảng 12: CHI_TIET_ANH (Chi tiết Ảnh)
+-- Bảng 13: CHI_TIET_ANH (Chi tiết Ảnh)
 CREATE TABLE `chi_tiet_anh` (
     `anh_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID Ảnh',
     `album_id` INT COMMENT 'ID Album chứa ảnh',
@@ -294,14 +314,73 @@ INSERT INTO `lich_su_su_dung_ma_giam_gia` (`ls_id`, `don_hang_id`, `ma_giam_gia_
 VALUES
 (1, 3, 1, 390000.00, '2025-11-17 09:01:00');
 
--- 4.9 ĐÁNH GIÁ SẢN PHẨM
-INSERT INTO `danh_gia_san_pham` (`danh_gia_id`, `san_pham_id`, `nguoi_dung_id`, `xep_hang`, `binh_luan`, `ngay_tao`)
-VALUES
-(1, 1, 2, 5, 'Hương thơm tuyệt vời, giữ mùi lâu. Rất hài lòng!', '2025-11-15 11:00:00'),
-(2, 3, 2, 4, 'Mùi dễ dùng, phù hợp hàng ngày.', '2025-11-16 15:00:00'),
-(3, 5, 2, 5, 'Chất lượng tốt, đóng gói chắc chắn.', '2025-11-17 10:00:00');
+-- 4.9 TIN TỨC MẪU
+INSERT INTO `tin_tuc` (`tin_tuc_id`, `tieu_de`, `slug`, `tom_tat`, `noi_dung`, `hinh_anh_dai_dien`, `tac_gia_id`, `trang_thai`, `luot_xem`, `ngay_tao`) VALUES
+(1, 'Xu hướng nước hoa mùa xuân 2025', 'xu-huong-nuoc-hoa-mua-xuan-2025', 'Khám phá những xu hướng nước hoa hot nhất mùa xuân năm nay với các note hương tươi mát và quyến rũ.', 
+'<h2>Xu hướng nước hoa mùa xuân 2025</h2>
+<p>Mùa xuân 2025 đang đến gần, và cùng với đó là những xu hướng nước hoa mới đầy thú vị. Năm nay, các nhà chế tác nước hoa tập trung vào việc tạo ra những mùi hương tươi mát, nhẹ nhang nhưng vẫn đầy quyến rũ.</p>
 
--- 4.10 LỊCH SỬ CHAT (Chatbot)
+<h3>1. Hương hoa cỏ tươi mát</h3>
+<p>Các note hương hoa cỏ như hoa nhài, hoa huệ, và hoa hồng trắng đang trở thành xu hướng chính. Chúng mang lại cảm giác tươi mới, thanh khiết và rất phù hợp với không khí mùa xuân.</p>
+
+<h3>2. Hương trái cây nhiệt đới</h3>
+<p>Các note hương trái cây như xoài, dứa, và chanh dây đang được ưa chuộng. Chúng tạo ra sự tươi mát và năng động, hoàn hảo cho những ngày xuân ấm áp.</p>
+
+<h3>3. Hương gỗ nhẹ</h3>
+<p>Thay vì những note gỗ nặng nề, mùa xuân 2025 ưa chuộng các loại gỗ nhẹ như gỗ tuyết tùng và gỗ đàn hương trắng, tạo nên sự cân bằng hoàn hảo.</p>
+
+<p>Hãy đến với Orianna Shop để khám phá bộ sưu tập nước hoa mùa xuân 2025 của chúng tôi!</p>', 
+'/images/news/spring-2025-trends.jpg', 1, 'da_xuat_ban', 156, '2025-01-15 09:00:00'),
+
+(2, 'Cách bảo quản nước hoa đúng cách', 'cach-bao-quan-nuoc-hoa-dung-cach', 'Hướng dẫn chi tiết cách bảo quản nước hoa để giữ được chất lượng và độ bền của hương thơm.', 
+'<h2>Cách bảo quản nước hoa đúng cách</h2>
+<p>Nước hoa là một khoản đầu tư không nhỏ, vì vậy việc bảo quản đúng cách là rất quan trọng để duy trì chất lượng và độ bền của hương thơm.</p>
+
+<h3>1. Tránh ánh sáng trực tiếp</h3>
+<p>Ánh sáng mặt trời có thể phá hủy các phân tử hương thơm. Hãy bảo quản nước hoa ở nơi tối, mát mẻ.</p>
+
+<h3>2. Nhiệt độ ổn định</h3>
+<p>Nhiệt độ lý tưởng để bảo quản nước hoa là từ 15-20°C. Tránh để nước hoa ở nơi có nhiệt độ thay đổi đột ngột.</p>
+
+<h3>3. Đậy nắp kín</h3>
+<p>Luôn đậy nắp chai nước hoa sau khi sử dụng để tránh bay hơi và oxy hóa.</p>
+
+<h3>4. Không lắc chai</h3>
+<p>Việc lắc chai có thể tạo ra bọt khí và làm thay đổi cấu trúc của nước hoa.</p>
+
+<p>Với những mẹo này, nước hoa của bạn sẽ giữ được chất lượng tốt nhất trong thời gian dài nhất!</p>', 
+'/images/news/perfume-storage.jpg', 1, 'da_xuat_ban', 89, '2025-01-10 14:30:00'),
+
+(3, 'Top 5 nước hoa unisex được yêu thích nhất', 'top-5-nuoc-hoa-unisex-duoc-yeu-thich-nhat', 'Danh sách những chai nước hoa unisex hot nhất hiện nay, phù hợp cho cả nam và nữ.', 
+'<h2>Top 5 nước hoa unisex được yêu thích nhất</h2>
+<p>Nước hoa unisex đang trở thành xu hướng được nhiều người yêu thích bởi tính linh hoạt và sự độc đáo. Dưới đây là top 5 chai nước hoa unisex hot nhất hiện nay:</p>
+
+<h3>1. Le Labo Santal 33</h3>
+<p>Với note hương gỗ đàn hương đặc trưng, Santal 33 là biểu tượng của sự tinh tế và hiện đại.</p>
+
+<h3>2. CK One</h3>
+<p>Một trong những chai nước hoa unisex kinh điển, CK One mang hương thơm tươi mát và sạch sẽ.</p>
+
+<h3>3. Gucci Mémoire d''une Odeur</h3>
+<p>Hương thơm độc đáo với note hoa cúc La Mã, tạo nên sự bí ẩn và thu hút.</p>
+
+<h3>4. Le Labo Another 13</h3>
+<p>Hương ambroxan sạch sẽ và gây nghiện, phù hợp cho mọi dịp.</p>
+
+<h3>5. Calvin Klein Eternity</h3>
+<p>Hương hoa cỏ cổ điển, thanh lịch và vượt thời gian.</p>
+
+<p>Tất cả những chai nước hoa này đều có sẵn tại Orianna Shop với giá ưu đãi!</p>', 
+'/images/news/top-unisex-perfumes.jpg', 1, 'da_xuat_ban', 234, '2025-01-05 16:45:00');
+
+-- 4.10 ĐÁNH GIÁ SẢN PHẨM (Cập nhật với điều kiện mới)
+INSERT INTO `danh_gia_san_pham` (`danh_gia_id`, `san_pham_id`, `nguoi_dung_id`, `don_hang_id`, `xep_hang`, `binh_luan`, `ngay_tao`, `trang_thai`)
+VALUES
+(1, 1, 2, 1, 5, 'Hương thơm tuyệt vời, giữ mùi lâu. Rất hài lòng!', '2025-11-18 11:00:00', 'hien_thi'),
+(2, 3, 2, 2, 4, 'Mùi dễ dùng, phù hợp hàng ngày.', '2025-11-19 15:00:00', 'hien_thi'),
+(3, 5, 2, 3, 5, 'Chất lượng tốt, đóng gói chắc chắn.', '2025-11-20 10:00:00', 'hien_thi');
+
+-- 4.11 LỊCH SỬ CHAT (Chatbot)
 INSERT INTO `lich_su_chat` (`log_id`, `nguoi_dung_id`, `session_id`, `loai_nguoi_gui`, `noi_dung`, `thoi_gian`)
 VALUES
 (1, 2, 'sess_abc123', 'nguoi_dung', 'Xin chào, tôi muốn hỏi về thời gian giao hàng.', '2025-11-15 10:05:00'),
@@ -309,14 +388,14 @@ VALUES
 (3, NULL, 'sess_guest_01', 'nguoi_dung', 'Tôi muốn chọn mã giảm giá ORI10, làm sao áp dụng?', '2025-11-16 14:00:00'),
 (4, NULL, 'sess_guest_01', 'bot', 'Bạn chỉ cần nhập mã ORI10 ở bước thanh toán nếu đơn hàng >= 500,000đ.', '2025-11-16 14:00:03');
 
--- 4.11 ALBUM ẢNH (cho một số sản phẩm)
+-- 4.12 ALBUM ẢNH (cho một số sản phẩm)
 INSERT INTO `album_anh` (`album_id`, `san_pham_id`, `ten_album`, `slug`, `mo_ta`)
 VALUES
 (1, 1, 'Ảnh Sản Phẩm Chính - Chanel N°5', 'chanel-no5-main', 'Album ảnh chính cho Chanel N°5'),
 (2, 3, 'Ảnh Tổng Quan - Bleu de Chanel', 'chanel-bleu-gallery', 'Ảnh tổng hợp Bleu de Chanel'),
 (3, 5, 'Ảnh Chi Tiết - Allure Homme Sport', 'chanel-allure-detail', 'Ảnh chi tiết Allure Homme Sport');
 
--- 4.12 CHI TIẾT ẢNH
+-- 4.13 CHI TIẾT ẢNH
 INSERT INTO `chi_tiet_anh` (`anh_id`, `album_id`, `tieu_de`, `url_day_du`, `vi_tri`, `trang_thai_hien_thi`)
 VALUES
 (1, 1, 'Chanel No5 - Hộp Chính', '/images/chanel_no5_box.jpg', 1, TRUE),
@@ -333,4 +412,6 @@ DROP DATABASE IF EXISTS orianna_shop_db;
 CREATE DATABASE orianna_shop_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE orianna_shop_db;
 
+SHOW TABLES LIKE 'tin_tuc';
+SELECT * FROM tin_tuc LIMIT 3;
 
