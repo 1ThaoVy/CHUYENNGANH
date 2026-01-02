@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin tài khoản - Orianna Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                    <span class="text-xl font-bold text-gray-800">Orianna Shop</span>
+                </a>
+                
+                <!-- Main Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="flex items-center space-x-1 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                        <span>Trang chủ</span>
+                    </a>
+                    
+                    <a href="about.html" class="flex items-center space-x-1 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50"> 
+                        <span>Giới thiệu</span>
+                    </a>
+                    
+                    <a href="products.html" class="flex items-center space-x-1 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                        <span>Sản phẩm</span>
+                    </a>
+                    
+                    <a href="news.html" class="flex items-center space-x-1 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                        <span>Tin tức</span>
+                    </a>
+                    
+                    <a href="contact.html" class="flex items-center space-x-1 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                        <span>Liên hệ</span>
+                    </a>
+                </div>
+
+                <!-- Right Side Icons -->
+                <div class="flex items-center space-x-3">
+                    <!-- Search -->
+                    <button onclick="toggleSearch()" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>                
+                    
+                    <!-- Cart -->
+                    <a href="cart.html" class="relative p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cart-count" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                    </a>
+
+                    <!-- User Menu -->
+                    <div id="user-menu" class="hidden relative">
+                        <div class="flex items-center space-x-3">
+                            <a href="orders.html" class="flex items-center space-x-1 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                                <span>Đơn hàng</span>
+                            </a>
+                            
+                            <div class="relative">
+                                <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                                    <div id="user-avatar-nav" class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                        U
+                                    </div>
+                                    <span id="user-name" class="text-sm font-medium"></span>
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                                    <a href="profile.html" class="block px-4 py-2 text-primary font-semibold bg-blue-50">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>Tài khoản</span>
+                                    </a>
+                                    <a id="admin-link" href="admin/dashboard.html" class="hidden flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>Admin</span>
+                                    </a>
+                                    <hr class="my-2">
+                                    <button onclick="logout()" class="flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>Đăng xuất</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guest Menu -->
+                    <div id="guest-menu" class="flex items-center space-x-2">
+                        <a href="login.html" class="text-sm text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Đăng nhập</a>
+                        <span class="text-gray-400">|</span>
+                        <a href="register.html" class="text-sm text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Đăng ký</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Content -->
+    <section class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <!-- User Avatar -->
+                        <div class="text-center mb-6">
+                            <div class="relative inline-block">
+                                <div id="user-avatar" class="w-20 h-20 bg-primary rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto">
+                                    U
+                                </div>
+                                <button onclick="changeAvatar()" class="absolute bottom-0 right-0 bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-orange-600">
+                                    ✏️
+                                </button>
+                            </div>
+                            <h3 id="sidebar-username" class="mt-3 font-bold text-lg">Tên người dùng</h3>
+                            <p id="sidebar-email" class="text-gray-600 text-sm">email@example.com</p>
+                        </div>
+
+                        <!-- Menu -->
+                        <nav class="space-y-2">
+                            <a href="#" onclick="showSection('personal-info')" class="flex items-center space-x-3 p-3 rounded-lg bg-orange-50 text-orange-600 font-semibold">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Thông tin cá nhân</span>
+                            </a>
+                            
+                            <a href="#" onclick="showSection('change-password')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Đổi mật khẩu</span>
+                            </a>
+                            
+                            <a href="orders.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                </svg>
+                                <span>Đơn hàng</span>
+                            </a>
+                            
+                            <a href="#" onclick="showSection('notifications')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                                </svg>
+                                <span>Thông báo</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:col-span-3">
+                    <!-- Personal Info Section -->
+                    <div id="personal-info-section" class="bg-white rounded-lg shadow-md">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-2xl font-bold text-gray-800">
+                                    <svg class="w-6 h-6 inline mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Thông Tin Cá Nhân
+                                </h2>
+                                <button onclick="toggleEdit()" id="edit-btn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold">
+                                    Chỉnh sửa
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <form id="profile-form" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2 text-orange-600">
+                                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Họ và tên
+                                        </label>
+                                        <input type="text" id="fullname" disabled
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2 text-orange-600">
+                                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                                            </svg>
+                                            Email
+                                        </label>
+                                        <input type="email" id="email" disabled
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100">
+                                        <p class="text-xs text-gray-500 mt-1">Email không thể thay đổi</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2 text-orange-600">
+                                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                                            </svg>
+                                            Số điện thoại
+                                        </label>
+                                        <input type="tel" id="phone" disabled
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2 text-orange-600">
+                                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Địa chỉ
+                                        </label>
+                                        <textarea id="address" rows="3" disabled
+                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:bg-gray-100"></textarea>
+                                    </div>
+                                </div>
+
+                                <div id="form-actions" class="hidden flex justify-end space-x-4 pt-4 border-t">
+                                    <button type="button" onclick="cancelEdit()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                        Hủy
+                                    </button>
+                                    <button type="submit" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold">
+                                        Lưu thay đổi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Change Password Section -->
+                    <div id="change-password-section" class="bg-white rounded-lg shadow-md hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                <svg class="w-6 h-6 inline mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Đổi Mật Khẩu
+                            </h2>
+                        </div>
+
+                        <div class="p-6">
+                            <form id="password-form" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Mật khẩu hiện tại</label>
+                                    <input type="password" id="current-password" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Mật khẩu mới</label>
+                                    <input type="password" id="new-password" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">Xác nhận mật khẩu mới</label>
+                                    <input type="password" id="confirm-password" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                </div>
+
+                                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg">
+                                    Đổi mật khẩu
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Section -->
+                    <div id="notifications-section" class="bg-white rounded-lg shadow-md hidden">
+                        <div class="p-6 border-b border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800">
+                                <svg class="w-6 h-6 inline mr-2 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                                </svg>
+                                Thông Báo
+                            </h2>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <div>
+                                            <p class="font-semibold">Đơn hàng #12345 đã được xác nhận</p>
+                                            <p class="text-sm text-gray-600">2 giờ trước</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <div>
+                                            <p class="font-semibold">Đơn hàng #12344 đã được giao thành công</p>
+                                            <p class="text-sm text-gray-600">1 ngày trước</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                        <div>
+                                            <p class="font-semibold">Khuyến mãi đặc biệt: Giảm 20% cho đơn hàng tiếp theo</p>
+                                            <p class="text-sm text-gray-600">3 ngày trước</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold">Tìm kiếm sản phẩm</h3>
+                    <button onclick="toggleSearch()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <form onsubmit="handleSearch(event)" class="relative">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm nước hoa, thương hiệu..." 
+                           class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg"
+                           autofocus>
+                    <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400">
+            <p>&copy; 2025 Orianna Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/profile.js"></script>
+    <script>
+        function toggleSearch() {
+            const modal = document.getElementById('search-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            }
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('search-input').value.trim();
+            if (searchTerm) {
+                window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('search-modal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleSearch();
+            }
+        });
+    </script>
+</body>
+</html>
