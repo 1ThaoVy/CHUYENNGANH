@@ -16,38 +16,70 @@
     <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
                 <a href="index.html" class="flex items-center space-x-2">
-                    <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10">
-                    <span class="text-2xl font-bold text-primary">Orianna Shop</span>
+                    <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                    <span class="text-xl font-bold text-gray-800">Orianna Shop</span>
                 </a>
-                <div class="hidden md:flex space-x-8">
-                    <a href="index.html" class="text-gray-700 hover:text-primary">Trang chủ</a>
-                    <a href="products.html" class="text-gray-700 hover:text-primary">Sản phẩm</a>
-                    <a href="about.html" class="text-gray-700 hover:text-primary">Giới thiệu</a>
-                    <a href="contact.html" class="text-gray-700 hover:text-primary">Liên hệ</a>
+                
+                <!-- Main Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Trang chủ</a>
+                    <a href="about.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Giới thiệu</a>
+                    <a href="products.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Sản phẩm</a>
+                    <a href="news.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Tin tức</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Liên hệ</a>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <!-- Search Button -->
-                    <button onclick="toggleSearch()" class="text-gray-700 hover:text-primary">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                <!-- Right Side -->
+                <div class="flex items-center space-x-3">
+                    <!-- Search -->
+                    <button onclick="toggleSearch()" class="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </button>
-                    <a href="cart.html" class="relative">
-                        <svg class="w-6 h-6 text-gray-700 hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    
+                    <!-- Cart -->
+                    <a href="cart.html" class="relative p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span id="cart-count" class="hidden absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                        <span id="cart-count" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
                     </a>
-                    <div id="user-menu" class="hidden">
-                        <a href="orders.html" class="text-gray-700 hover:text-primary">Đơn hàng</a>
-                        <span id="user-name" class="text-gray-700 ml-4"></span>
-                        <button onclick="logout()" class="text-red-600 hover:text-red-700 ml-4">Đăng xuất</button>
+
+                    <!-- User Menu -->
+                    <div id="user-menu" class="hidden relative">
+                        <div class="flex items-center space-x-3">
+                            <a href="orders.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Đơn hàng</a>
+                            
+                            <div class="relative">
+                                <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">
+                                    <div id="user-avatar-nav" class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                        U
+                                    </div>
+                                    <span id="user-name" class="text-sm font-medium"></span>
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                                    <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-50">Tài khoản</a>
+                                    <a id="admin-link" href="admin/dashboard.html" class="hidden block px-4 py-2 text-gray-700 hover:bg-gray-50">Admin</a>
+                                    <hr class="my-2">
+                                    <button onclick="logout()" class="block px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left">Đăng xuất</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="guest-menu" class="flex space-x-2">
-                        <a href="login.html" class="text-gray-700 hover:text-primary">Đăng nhập</a>
+
+                    <!-- Guest Menu -->
+                    <div id="guest-menu" class="flex items-center space-x-2">
+                        <a href="login.html" class="text-sm text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Đăng nhập</a>
                         <span class="text-gray-400">|</span>
-                        <a href="register.html" class="text-gray-700 hover:text-primary">Đăng ký</a>
+                        <a href="register.html" class="text-sm text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Đăng ký</a>
                     </div>
                 </div>
             </div>
@@ -88,13 +120,14 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white mt-auto">
         <div class="container mx-auto px-4 py-6 text-center text-gray-400">
-            <p>&copy; 2024 Orianna Shop. All rights reserved.</p>
+            <p>&copy; 2025 Orianna Shop. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/dropdown.js"></script>
     <script>
         function toggleSearch() {
             const modal = document.getElementById('search-modal');
@@ -123,6 +156,279 @@
         const productId = new URLSearchParams(window.location.search).get('id');
         let currentProduct = null;
         let quantity = 1;
+        let currentReviewPage = 1;
+        let reviewsData = null;
+
+        async function loadProduct() {
+            try {
+                const data = await apiCall(`/products/${productId}`);
+                currentProduct = data.data;
+                displayProduct(currentProduct);
+                await loadReviews();
+                await checkReviewPermission();
+            } catch (error) {
+                document.getElementById('loading').innerHTML = '<p class="text-red-600">Không tìm thấy sản phẩm</p>';
+            }
+        }
+
+        // Load reviews
+        async function loadReviews(page = 1) {
+            try {
+                const response = await apiCall(`/reviews/product/${productId}?page=${page}&limit=5`);
+                reviewsData = response.data;
+                displayReviewStats(reviewsData.stats);
+                displayReviews(reviewsData.reviews, page === 1);
+                displayLoadMoreButton(reviewsData.pagination);
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        }
+
+        // Display review statistics
+        function displayReviewStats(stats) {
+            const container = document.getElementById('review-stats');
+            
+            if (!stats || stats.tong_danh_gia === 0) {
+                container.innerHTML = '<p class="text-gray-500">Chưa có đánh giá nào cho sản phẩm này.</p>';
+                return;
+            }
+
+            const avgRating = parseFloat(stats.diem_trung_binh).toFixed(1);
+            
+            container.innerHTML = `
+                <div class="flex items-center space-x-8">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-yellow-500 mb-2">${avgRating}</div>
+                        <div class="flex justify-center mb-2">
+                            ${generateStars(Math.round(avgRating))}
+                        </div>
+                        <div class="text-sm text-gray-600">${stats.tong_danh_gia} đánh giá</div>
+                    </div>
+                    <div class="flex-1">
+                        ${[5, 4, 3, 2, 1].map(star => {
+                            const count = stats[`sao_${star}`] || 0;
+                            const percentage = stats.tong_danh_gia > 0 ? (count / stats.tong_danh_gia * 100) : 0;
+                            return `
+                                <div class="flex items-center mb-1">
+                                    <span class="text-sm w-8">${star}⭐</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2 mx-3">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: ${percentage}%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600 w-8">${count}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Check if user can review this product
+        async function checkReviewPermission() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const container = document.getElementById('review-form-container');
+            
+            if (!user || !user.nguoi_dung_id) {
+                container.innerHTML = `
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <p class="text-gray-600 mb-4">Bạn cần đăng nhập để có thể đánh giá sản phẩm</p>
+                        <a href="login.html" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark">
+                            Đăng nhập
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await apiCall(`/reviews/can-review/${productId}`);
+                
+                if (response.canReview) {
+                    displayReviewForm(response.availableOrders);
+                } else {
+                    container.innerHTML = `
+                        <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                            <p class="text-yellow-800">${response.message}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error checking review permission:', error);
+                container.innerHTML = `
+                    <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                        <p class="text-yellow-800">Bạn chỉ có thể đánh giá sản phẩm đã mua và trong vòng 3 ngày sau khi đơn hàng hoàn thành</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display review form
+        function displayReviewForm(availableOrders) {
+            const container = document.getElementById('review-form-container');
+            
+            container.innerHTML = `
+                <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">Viết đánh giá của bạn</h3>
+                    <form id="review-form" onsubmit="submitReview(event)">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Đơn hàng</label>
+                            <select id="order-select" required class="w-full border rounded-lg px-3 py-2">
+                                <option value="">Chọn đơn hàng</option>
+                                ${availableOrders.map(order => `
+                                    <option value="${order.don_hang_id}">
+                                        Đơn hàng #${order.don_hang_id} - ${formatDate(order.ngay_dat_hang)}
+                                        (còn ${3 - order.ngay_da_qua} ngày)
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Đánh giá</label>
+                            <div class="flex space-x-1">
+                                ${[1, 2, 3, 4, 5].map(star => `
+                                    <button type="button" onclick="setRating(${star})" 
+                                            class="star-btn text-2xl text-gray-300 hover:text-yellow-400" 
+                                            data-rating="${star}">⭐</button>
+                                `).join('')}
+                            </div>
+                            <input type="hidden" id="rating-input" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nhận xét</label>
+                            <textarea id="comment-input" rows="4" 
+                                      class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark">
+                            Gửi đánh giá
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        // Set rating stars
+        function setRating(rating) {
+            document.getElementById('rating-input').value = rating;
+            
+            const stars = document.querySelectorAll('.star-btn');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('text-gray-300');
+                    star.classList.add('text-yellow-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-gray-300');
+                }
+            });
+        }
+
+        // Submit review
+        async function submitReview(event) {
+            event.preventDefault();
+            
+            const formData = {
+                san_pham_id: parseInt(productId),
+                don_hang_id: parseInt(document.getElementById('order-select').value),
+                xep_hang: parseInt(document.getElementById('rating-input').value),
+                binh_luan: document.getElementById('comment-input').value
+            };
+
+            try {
+                await apiCall('/reviews', 'POST', formData);
+                alert('Đánh giá của bạn đã được gửi thành công!');
+                
+                // Reload reviews and check permission
+                await loadReviews();
+                await checkReviewPermission();
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.');
+            }
+        }
+
+        // Display reviews
+        function displayReviews(reviews, replace = true) {
+            const container = document.getElementById('reviews-list');
+            
+            if (!reviews || reviews.length === 0) {
+                if (replace) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-8">Chưa có đánh giá nào.</p>';
+                }
+                return;
+            }
+
+            const reviewsHTML = reviews.map(review => `
+                <div class="border-b border-gray-200 pb-4 mb-4 last:border-b-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                                ${review.ten_khach_hang.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-800">${review.ten_khach_hang}</div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex">${generateStars(review.xep_hang)}</div>
+                                    <span class="text-sm text-gray-500">${review.ngay_tao_formatted}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ${review.binh_luan ? `<p class="text-gray-700 ml-13">${review.binh_luan}</p>` : ''}
+                </div>
+            `).join('');
+
+            if (replace) {
+                container.innerHTML = reviewsHTML;
+            } else {
+                container.innerHTML += reviewsHTML;
+            }
+        }
+
+        // Display load more button
+        function displayLoadMoreButton(pagination) {
+            const container = document.getElementById('load-more-reviews');
+            
+            if (pagination.page >= pagination.totalPages) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = `
+                <button onclick="loadMoreReviews()" 
+                        class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300">
+                    Xem thêm đánh giá
+                </button>
+            `;
+        }
+
+        // Load more reviews
+        async function loadMoreReviews() {
+            currentReviewPage++;
+            await loadReviews(currentReviewPage);
+        }
+
+        // Generate stars HTML
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<span class="text-yellow-400">⭐</span>';
+                } else {
+                    stars += '<span class="text-gray-300">⭐</span>';
+                }
+            }
+            return stars;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
 
         async function loadProduct() {
             try {
@@ -141,9 +447,12 @@
 
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-white rounded-lg shadow-md">
-                        <div class="h-96 bg-gray-200 flex items-center justify-center">
-                            <span class="text-gray-400 text-xl">Hình ảnh sản phẩm</span>
+                    <div class="rounded-lg overflow-hidden">
+                        <div class="w-full aspect-square bg-gray-100 flex items-center justify-center">
+                            ${product.url_hinh_anh_chinh ? 
+                                `<img src="http://localhost:3001${product.url_hinh_anh_chinh}" alt="${product.ten_san_pham}" class="w-full h-full object-contain">` :
+                                `<span class="text-gray-400 text-xl">Hình ảnh sản phẩm</span>`
+                            }
                         </div>
                     </div>
 
@@ -190,6 +499,35 @@
                             <h2 class="text-xl font-semibold mb-4">Mô tả sản phẩm</h2>
                             <p class="text-gray-700 whitespace-pre-line">${product.mo_ta}</p>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="mt-12">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-2xl font-bold mb-6">Đánh giá sản phẩm</h2>
+                        
+                        <!-- Review Stats -->
+                        <div id="review-stats" class="mb-8">
+                            <!-- Stats will be loaded here -->
+                        </div>
+
+                        <!-- Review Form -->
+                        <div id="review-form-container" class="mb-8">
+                            <!-- Review form will be loaded here -->
+                        </div>
+
+                        <!-- Reviews List -->
+                        <div id="reviews-list">
+                            <!-- Reviews will be loaded here -->
+                        </div>
+
+                        <!-- Load More Reviews -->
+                        <div id="load-more-reviews" class="text-center mt-6">
+                            <!-- Load more button will be loaded here -->
+                        </div>
+                    </div>
+                </div>
 
                         ${product.reviews && product.reviews.length > 0 ? `
                             <div class="border-t pt-6 mt-6">
@@ -207,8 +545,6 @@
                                 </div>
                             </div>
                         ` : ''}
-                    </div>
-                </div>
             `;
         }
 
