@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const { protect, authorize } = require('../middleware/auth');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 // Configure multer storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'image/') // Save to image folder
+        // Sử dụng thư mục image gốc
+        cb(null, 'image/');
     },
     filename: function (req, file, cb) {
         // Generate unique filename
@@ -37,7 +38,7 @@ const upload = multer({
 });
 
 // Upload single image (Admin only)
-router.post('/image', protect, authorize('admin'), upload.single('image'), (req, res) => {
+router.post('/image', authenticateToken, requireAdmin, upload.single('image'), (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'Không có file được upload' });
@@ -48,6 +49,7 @@ router.post('/image', protect, authorize('admin'), upload.single('image'), (req,
         res.json({
             success: true,
             message: 'Upload ảnh thành công',
+            imageUrl: imageUrl,
             data: {
                 filename: req.file.filename,
                 url: imageUrl,
@@ -60,7 +62,7 @@ router.post('/image', protect, authorize('admin'), upload.single('image'), (req,
 });
 
 // Upload multiple images (Admin only)
-router.post('/images', protect, authorize('admin'), upload.array('images', 10), (req, res) => {
+router.post('/images', authenticateToken, requireAdmin, upload.array('images', 10), (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ success: false, message: 'Không có file được upload' });
