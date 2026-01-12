@@ -4,6 +4,15 @@ let isEditing = false;
 // Load user profile data when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadUserProfile();
+    
+    // Kiểm tra xem có cần hiển thị section thông báo không
+    const selectedNotificationId = localStorage.getItem('selectedNotificationId');
+    if (selectedNotificationId) {
+        // Hiển thị section thông báo
+        showSection('notifications');
+        // Xóa flag
+        localStorage.removeItem('selectedNotificationId');
+    }
 });
 
 // Load user profile from localStorage or API

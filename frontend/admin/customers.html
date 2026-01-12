@@ -42,10 +42,7 @@
                     <span class="text-xl">🏷️</span>
                     <span>Danh mục</span>
                 </a>
-                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
-                    <span class="text-xl">📰</span>
-                    <span>Tin tức</span>
-                </a>
+
                 <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">⚡</span>
                     <span>Flash Sale</span>
@@ -53,6 +50,10 @@
                 <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
                     <span class="text-xl">👥</span>
                     <span>Khách hàng</span>
+                </a>
+                <a href="contact-messages.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">💬</span>
+                    <span>Liên hệ</span>
                 </a>
                 <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">⚙️</span>
@@ -142,7 +143,7 @@
                 <input type="text" id="search-input" placeholder="Tìm kiếm theo tên, email, SĐT..." class="flex-1 px-4 py-2 border rounded-lg">
                 <select id="role-filter" class="px-4 py-2 border rounded-lg">
                     <option value="">Tất cả vai trò</option>
-                    <option value="user">Khách hàng</option>
+                    <option value="khach_hang">Khách hàng</option>
                     <option value="admin">Admin</option>
                 </select>
                 <button onclick="loadCustomers()" class="bg-primary hover:bg-cyan-600 text-white px-6 py-2 rounded-lg">
@@ -202,10 +203,14 @@
                 const response = await apiCall('/auth/users', 'GET', null, true);
                 customers = response.data || [];
                 console.log('Customers loaded:', customers.length);
+                console.log('Sample customer:', customers[0]);
                 
                 // Apply filters
                 const searchTerm = document.getElementById('search-input').value;
                 const roleFilter = document.getElementById('role-filter').value;
+                
+                console.log('Search term:', searchTerm);
+                console.log('Role filter:', roleFilter);
                 
                 let filtered = customers;
                 if (searchTerm) {
@@ -216,7 +221,9 @@
                     );
                 }
                 if (roleFilter) {
+                    console.log('Filtering by role:', roleFilter);
                     filtered = filtered.filter(c => c.vai_tro === roleFilter);
+                    console.log('Filtered customers:', filtered.length);
                 }
                 
                 displayCustomers(filtered);
@@ -274,8 +281,8 @@
             const vipCustomers = customers.filter(c => c.vai_tro === 'admin');
             document.getElementById('vip-customers').textContent = vipCustomers.length;
             
-            // Active customers (all for now)
-            const activeCustomers = customers.filter(c => c.trang_thai === 'active');
+            // Active customers (using correct database value)
+            const activeCustomers = customers.filter(c => c.trang_thai === 'kich_hoat');
             document.getElementById('active-customers').textContent = activeCustomers.length;
         }
 
@@ -349,6 +356,11 @@
         // Search on enter
         document.getElementById('search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') loadCustomers();
+        });
+
+        // Filter on change
+        document.getElementById('role-filter').addEventListener('change', () => {
+            loadCustomers();
         });
 
         // Logout function

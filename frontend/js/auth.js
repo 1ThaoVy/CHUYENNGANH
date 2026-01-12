@@ -37,6 +37,12 @@ function checkAuth() {
 
 // Logout function
 function logout() {
+    // Xóa tất cả dữ liệu liên quan đến user
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (user) {
+        localStorage.removeItem(`cart_${user.nguoi_dung_id}`);
+    }
+    localStorage.removeItem('cart_guest');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = 'index.html';

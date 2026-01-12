@@ -1,10 +1,15 @@
 // Cart management
+function getCartKey() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    return user ? `cart_${user.nguoi_dung_id}` : 'cart_guest';
+}
+
 function getCart() {
-    return JSON.parse(localStorage.getItem('cart') || '[]');
+    return JSON.parse(localStorage.getItem(getCartKey()) || '[]');
 }
 
 function saveCart(cart) {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem(getCartKey(), JSON.stringify(cart));
     updateCartCount();
 }
 
@@ -40,7 +45,7 @@ function updateQuantity(san_pham_id, quantity) {
 }
 
 function clearCart() {
-    localStorage.removeItem('cart');
+    localStorage.removeItem(getCartKey());
     updateCartCount();
 }
 
@@ -70,3 +75,24 @@ function updateCartCount() {
 
 // Initialize cart count on page load
 document.addEventListener('DOMContentLoaded', updateCartCount);
+
+// Function to transfer guest cart to user cart when login
+function transferGuestCartToUser() {
+    const guestCart = JSON.parse(localStorage.getItem('cart_guest') || '[]');
+    if (guestCart.length > 0) {
+        const userCart = getCart();
+        
+        // Merge guest cart with user cart
+        guestCart.forEach(guestItem => {
+            const existingItem = userCart.find(item => item.san_pham_id === guestItem.san_pham_id);
+            if (existingItem) {
+                existingItem.quantity += guestItem.quantity;
+            } else {
+                userCart.push(guestItem);
+            }
+        });
+        
+        saveCart(userCart);
+        localStorage.removeItem('cart_guest'); // Xóa giỏ hàng guest
+    }
+}

@@ -1,3 +1,5 @@
+console.log('🚀 Dashboard.js loaded!');
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, starting dashboard...');
@@ -356,12 +358,63 @@ async function loadTopProducts() {
 // Load order statistics
 async function loadOrderStats() {
     try {
+        console.log('🔄 Loading order stats...');
         const data = await apiCall('/dashboard/order-stats', 'GET', null, true);
+        console.log('📊 Order stats data received:', data);
         
-        // Update order status chart if needed
-        console.log('Order stats loaded:', data.data);
+        if (data && data.success && data.data && data.data.length > 0) {
+            // Tính tổng số đơn hàng để tính phần trăm
+            const totalOrders = data.data.reduce((sum, item) => sum + item.count, 0);
+            console.log('📈 Total orders:', totalOrders);
+            
+            const orderStatsHTML = data.data.map(stat => {
+                const percentage = totalOrders > 0 ? (stat.count / totalOrders) * 100 : 0;
+                const color = stat.mau_sac || '#6B7280'; // Fallback color
+                console.log(`📊 Status: ${stat.ten_trang_thai}, Count: ${stat.count}, Color: ${color}, Percentage: ${percentage}%`);
+                
+                return `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 rounded-full" style="background-color: ${color};"></div>
+                            <span class="text-sm">${stat.ten_trang_thai}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="rounded-full h-2 w-24" style="background-color: ${color}20;">
+                                <div class="h-2 rounded-full" style="width: ${percentage}%; background-color: ${color};"></div>
+                            </div>
+                            <span class="text-sm font-bold">${stat.count}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Tìm container chứa thống kê đơn hàng
+            const orderStatsContainer = document.getElementById('order-stats-container');
+            if (orderStatsContainer) {
+                orderStatsContainer.innerHTML = orderStatsHTML;
+                console.log('✅ Order stats HTML updated');
+            } else {
+                console.error('❌ Could not find order-stats-container');
+            }
+        } else {
+            console.log('⚠️ No order data or API failed');
+            // Hiển thị thông báo không có dữ liệu
+            const orderStatsContainer = document.getElementById('order-stats-container');
+            if (orderStatsContainer) {
+                orderStatsContainer.innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-gray-500">Chưa có đơn hàng nào</div></div>';
+            }
+        }
+        
+        console.log('✅ Order stats loaded successfully');
     } catch (error) {
-        console.error('Error loading order stats:', error);
+        console.error('❌ Error loading order stats:', error);
+        console.log('🔄 Using fallback message...');
+        
+        // Hiển thị thông báo lỗi
+        const orderStatsContainer = document.getElementById('order-stats-container');
+        if (orderStatsContainer) {
+            orderStatsContainer.innerHTML = '<div class="flex items-center justify-center py-8"><div class="text-red-500">Không thể tải dữ liệu thống kê</div></div>';
+        }
     }
 }
 

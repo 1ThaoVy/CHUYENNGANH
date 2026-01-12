@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cài đặt Website - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: { extend: { colors: { primary: '#06B6D4' } } }
@@ -42,10 +43,7 @@
                     <span class="text-xl">🏷️</span>
                     <span>Danh mục</span>
                 </a>
-                <a href="manage-news.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
-                    <span class="text-xl">📰</span>
-                    <span>Tin tức</span>
-                </a>
+
                 <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">⚡</span>
                     <span>Flash Sale</span>
@@ -53,6 +51,10 @@
                 <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
                     <span class="text-xl">👥</span>
                     <span>Khách hàng</span>
+                </a>
+                <a href="contact-messages.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">💬</span>
+                    <span>Liên hệ</span>
                 </a>
                 <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
                     <span class="text-xl">⚙️</span>
@@ -93,6 +95,17 @@
 
         <!-- Page Content -->
         <main class="flex-1 p-6">
+            <!-- Action Buttons -->
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">Thông tin cấu hình</h2>
+                    <p class="text-gray-600 text-sm">Quản lý thông tin hiển thị trên website</p>
+                </div>
+                <button onclick="openEditModal()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                    <i class="fas fa-edit mr-2"></i>
+                    Chỉnh sửa thông tin
+                </button>
+            </div>
             <!-- Contact Info Display -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Address Card -->
@@ -292,27 +305,220 @@
         </main>
     </div>
 
+    <!-- Edit Settings Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-xl font-semibold text-gray-900">Chỉnh sửa thông tin website</h3>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="settings-form" class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Basic Information -->
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-semibold text-gray-900 border-b pb-2">Thông tin cơ bản</h4>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tên website</label>
+                                <input type="text" id="ten-website" name="ten_website" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tên công ty</label>
+                                <input type="text" id="ten-cong-ty" name="ten_cong_ty" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Mã số thuế</label>
+                                <input type="text" id="ma-so-thue" name="ma_so_thue" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Địa chỉ</label>
+                                <textarea id="dia-chi" name="dia_chi" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-semibold text-gray-900 border-b pb-2">Thông tin liên hệ</h4>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hotline</label>
+                                <input type="text" id="hotline" name="hotline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                                <input type="text" id="so-dien-thoai" name="so_dien_thoai" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Giờ làm việc</label>
+                                <textarea id="gio-lam-viec" name="gio_lam_viec" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-semibold text-gray-900 border-b pb-2">Mạng xã hội</h4>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
+                                <input type="url" id="facebook-url" name="facebook_url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
+                                <input type="url" id="instagram-url" name="instagram_url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Zalo</label>
+                                <input type="text" id="zalo" name="zalo" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+
+                        <!-- Business Information -->
+                        <div class="space-y-4">
+                            <h4 class="text-lg font-semibold text-gray-900 border-b pb-2">Thông tin kinh doanh</h4>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Giấy phép kinh doanh</label>
+                                <input type="text" id="giay-phep-kinh-doanh" name="giay_phep_kinh_doanh" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phí ship tối thiểu (VND)</label>
+                                <input type="number" id="phi-ship-toi-thieu" name="phi_ship_toi_thieu" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features Section -->
+                    <div class="mt-8">
+                        <h4 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Tính năng nổi bật</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h5 class="font-medium text-gray-800">Tính năng 1</h5>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="text" id="tinh-nang-1-icon" name="tinh_nang_1_icon" placeholder="Icon" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <input type="text" id="tinh-nang-1-tieu-de" name="tinh_nang_1_tieu_de" placeholder="Tiêu đề" class="col-span-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                <textarea id="tinh-nang-1-mo-ta" name="tinh_nang_1_mo_ta" placeholder="Mô tả" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h5 class="font-medium text-gray-800">Tính năng 2</h5>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="text" id="tinh-nang-2-icon" name="tinh_nang_2_icon" placeholder="Icon" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <input type="text" id="tinh-nang-2-tieu-de" name="tinh_nang_2_tieu_de" placeholder="Tiêu đề" class="col-span-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                <textarea id="tinh-nang-2-mo-ta" name="tinh_nang_2_mo_ta" placeholder="Mô tả" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h5 class="font-medium text-gray-800">Tính năng 3</h5>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="text" id="tinh-nang-3-icon" name="tinh_nang_3_icon" placeholder="Icon" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <input type="text" id="tinh-nang-3-tieu-de" name="tinh_nang_3_tieu_de" placeholder="Tiêu đề" class="col-span-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                <textarea id="tinh-nang-3-mo-ta" name="tinh_nang_3_mo_ta" placeholder="Mô tả" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h5 class="font-medium text-gray-800">Tính năng 4</h5>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="text" id="tinh-nang-4-icon" name="tinh_nang_4_icon" placeholder="Icon" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <input type="text" id="tinh-nang-4-tieu-de" name="tinh_nang_4_tieu_de" placeholder="Tiêu đề" class="col-span-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                <textarea id="tinh-nang-4-mo-ta" name="tinh_nang_4_mo_ta" placeholder="Mô tả" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Policies Section -->
+                    <div class="mt-8">
+                        <h4 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Chính sách & Điều khoản</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chính sách bảo hành</label>
+                                <textarea id="chinh-sach-bao-hanh" name="chinh_sach_bao_hanh" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chính sách đổi trả</label>
+                                <textarea id="chinh-sach-doi-tra" name="chinh_sach_doi_tra" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chính sách giao hàng</label>
+                                <textarea id="chinh-sach-giao-hang" name="chinh_sach_giao_hang" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chính sách bảo mật</label>
+                                <textarea id="chinh-sach-bao-mat" name="chinh_sach_bao_mat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-end space-x-4 mt-8 pt-6 border-t">
+                        <button type="button" onclick="closeEditModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Hủy
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                            <i class="fas fa-save mr-2"></i>
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/config.js"></script>
     <script src="admin-auth.js"></script>
     <script>
+        // Ensure API_BASE_URL is available
+        if (typeof API_BASE_URL === 'undefined') {
+            const API_BASE_URL = 'http://localhost:3001/api';
+        }
+        
         let currentSettings = {};
 
         // Load settings
         async function loadSettings() {
             try {
-                console.log('Loading settings...');
+                console.log('🔧 Loading settings...');
+                console.log('🔧 API URL:', `${API_BASE_URL || 'http://localhost:3001/api'}/settings`);
+                
                 const response = await apiCall('/settings');
+                console.log('🔧 Settings response:', response);
+                
                 currentSettings = response.data;
                 
                 // Update display cards
                 updateDisplayCards();
                 
-                console.log('Settings loaded successfully');
+                console.log('✅ Settings loaded successfully');
             } catch (error) {
-                console.error('Error loading settings:', error);
+                console.error('❌ Error loading settings:', error);
+                console.error('❌ Error details:', error.message);
+                
                 // If no settings exist, show default values
                 if (error.message.includes('404')) {
-                    console.log('No settings found, showing default values');
+                    console.log('ℹ️ No settings found, showing default values');
                     showDefaultValues();
                 } else {
                     alert('Lỗi tải cài đặt: ' + error.message);
@@ -384,9 +590,9 @@
                 instagramDisplay.textContent = currentSettings.instagram_url.replace('https://instagram.com/', '@');
             }
 
-            const youtubeDisplay = document.getElementById('display-youtube');
-            if (youtubeDisplay && currentSettings.youtube_url) {
-                youtubeDisplay.textContent = 'Orianna Channel';
+            const zaloDisplay = document.getElementById('display-zalo');
+            if (zaloDisplay && currentSettings.zalo) {
+                zaloDisplay.textContent = currentSettings.zalo;
             }
 
             // Update business info
@@ -398,7 +604,6 @@
             const shippingFeeDisplay = document.getElementById('display-phi-ship');
             if (shippingFeeDisplay && currentSettings.phi_ship_toi_thieu) {
                 shippingFeeDisplay.textContent = new Intl.NumberFormat('vi-VN').format(currentSettings.phi_ship_toi_thieu) + ' VND';
-            }
             }
 
             // Update features
@@ -452,6 +657,105 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadSettings();
+        });
+
+        // Open edit modal
+        function openEditModal() {
+            // Populate form with current settings
+            populateForm();
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        // Populate form with current settings
+        function populateForm() {
+            // Basic information
+            document.getElementById('ten-website').value = currentSettings.ten_website || 'Orianna Perfume Store';
+            document.getElementById('ten-cong-ty').value = currentSettings.ten_cong_ty || 'Cửa hàng nước hoa Orianna';
+            document.getElementById('ma-so-thue').value = currentSettings.ma_so_thue || '0123456789';
+            document.getElementById('dia-chi').value = currentSettings.dia_chi || 'Nguyễn Thiện Thành, Phường Hòa Thuận\nTỉnh Vĩnh Long';
+
+            // Contact information
+            document.getElementById('hotline').value = currentSettings.hotline || '078 747 2078';
+            document.getElementById('so-dien-thoai').value = currentSettings.so_dien_thoai || '0388853044';
+            document.getElementById('email').value = currentSettings.email || 'nguyenhuynhkitthuat94tv@gmail.com';
+            document.getElementById('gio-lam-viec').value = currentSettings.gio_lam_viec || 'Thứ 2 - Thứ 6: 8:00 - 17:00\nThứ 7 - CN: 8:00 - 16:00';
+
+            // Social media
+            document.getElementById('facebook-url').value = currentSettings.facebook_url || 'https://facebook.com/orianna.perfume.vinhlong';
+            document.getElementById('instagram-url').value = currentSettings.instagram_url || 'https://instagram.com/orianna_perfume_vl';
+            document.getElementById('zalo').value = currentSettings.zalo || '0388853044';
+
+            // Business information
+            document.getElementById('giay-phep-kinh-doanh').value = currentSettings.giay_phep_kinh_doanh || 'Đang cập nhật';
+            document.getElementById('phi-ship-toi-thieu').value = currentSettings.phi_ship_toi_thieu || '25000';
+
+            // Features
+            const features = [
+                { icon: '🚚', title: 'Giao hàng tận nơi', desc: 'Giao hàng tận nơi trong khu vực Vĩnh Long' },
+                { icon: '💯', title: 'Nước hoa chính hãng', desc: '100% nước hoa chính hãng từ các thương hiệu uy tín' },
+                { icon: '👨‍💼', title: 'Tư vấn chuyên nghiệp', desc: 'Đội ngũ tư vấn am hiểu về nước hoa' },
+                { icon: '💰', title: 'Giá cả hợp lý', desc: 'Giá cả cạnh tranh, nhiều ưu đãi hấp dẫn' }
+            ];
+
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`tinh-nang-${i}-icon`).value = currentSettings[`tinh_nang_${i}_icon`] || features[i-1].icon;
+                document.getElementById(`tinh-nang-${i}-tieu-de`).value = currentSettings[`tinh_nang_${i}_tieu_de`] || features[i-1].title;
+                document.getElementById(`tinh-nang-${i}-mo-ta`).value = currentSettings[`tinh_nang_${i}_mo_ta`] || features[i-1].desc;
+            }
+
+            // Policies
+            document.getElementById('chinh-sach-bao-hanh').value = currentSettings.chinh_sach_bao_hanh || 'Sản phẩm nước hoa chính hãng được bảo hành về chất lượng. Đổi trả nếu phát hiện hàng giả hoặc không đúng mô tả.';
+            document.getElementById('chinh-sach-doi-tra').value = currentSettings.chinh_sach_doi_tra || 'Đổi trả sản phẩm trong 3 ngày nếu sản phẩm bị lỗi hoặc không đúng mô tả. Sản phẩm phải còn nguyên seal.';
+            document.getElementById('chinh-sach-giao-hang').value = currentSettings.chinh_sach_giao_hang || 'Giao hàng tận nơi trong khu vực Vĩnh Long. Phí ship 25,000 VND. Miễn phí ship cho đơn hàng từ 500,000 VND.';
+            document.getElementById('chinh-sach-bao-mat').value = currentSettings.chinh_sach_bao_mat || 'Cam kết bảo mật thông tin cá nhân của khách hàng. Không chia sẻ thông tin cho bên thứ ba khi chưa có sự đồng ý.';
+        }
+
+        // Handle form submission
+        document.getElementById('settings-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                const settings = {};
+                
+                // Convert FormData to object
+                for (let [key, value] of formData.entries()) {
+                    settings[key] = value;
+                }
+
+                console.log('🔧 Saving settings:', settings);
+                console.log('🔧 API URL:', `${API_BASE_URL || 'http://localhost:3001/api'}/settings`);
+                
+                // Test API connection first
+                try {
+                    const testResponse = await fetch('http://localhost:3001/api/health');
+                    const testResult = await testResponse.json();
+                    console.log('🔧 Health check:', testResult);
+                } catch (healthError) {
+                    console.error('❌ Health check failed:', healthError);
+                    throw new Error('Không thể kết nối đến server');
+                }
+                
+                const response = await apiCall('/settings', 'PUT', settings, true);
+                
+                if (response.success) {
+                    alert('Cập nhật thông tin thành công!');
+                    currentSettings = { ...currentSettings, ...settings };
+                    updateDisplayCards();
+                    closeEditModal();
+                } else {
+                    throw new Error(response.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('❌ Error saving settings:', error);
+                console.error('❌ Error stack:', error.stack);
+                alert('Lỗi cập nhật thông tin: ' + error.message);
+            }
         });
     </script>
 </body>

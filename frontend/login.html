@@ -49,6 +49,7 @@
     </div>
 
     <script src="js/config.js"></script>
+    <script src="js/cart.js"></script>
     <script>
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -66,6 +67,9 @@
 
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Chuyển giỏ hàng từ guest sang user
+                transferGuestCartToUser();
                 
                 // Redirect dựa vào vai trò
                 if (data.user.vai_tro === 'admin') {

@@ -1,5 +1,6 @@
 // API Configuration
-const API_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'http://localhost:3001/api';
+const API_URL = API_BASE_URL; // Backward compatibility
 
 // Helper function to make API calls
 async function apiCall(endpoint, method = 'GET', data = null, requireAuth = false) {
@@ -23,7 +24,7 @@ async function apiCall(endpoint, method = 'GET', data = null, requireAuth = fals
     }
 
     try {
-        const response = await fetch(`${API_URL}${endpoint}`, options);
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
         const responseData = await response.json();
 

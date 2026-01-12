@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Contact Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px; padding: 10px 20px; }
+        #output { background: #f5f5f5; padding: 20px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test Contact Admin Page</h1>
+    <p>Nếu bạn thấy trang này, nghĩa là static file serving hoạt động bình thường.</p>
+    
+    <button onclick="testAPI()">Test Contact API</button>
+    <div id="output"></div>
+
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.innerHTML = 'Testing...';
+            
+            try {
+                // Set temporary admin token
+                localStorage.setItem('token', 'temp-admin-token-for-testing');
+                
+                const response = await fetch('/api/contact/stats', {
+                    headers: {
+                        'Authorization': 'Bearer temp-admin-token-for-testing',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                output.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+            } catch (error) {
+                output.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

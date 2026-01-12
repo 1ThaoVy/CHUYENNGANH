@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard</title>
+</head>
+<body>
+    <h1>Test Dashboard</h1>
+    <div id="order-stats-container">Loading...</div>
+
+    <script>
+        console.log('🚀 Test script loaded!');
+        
+        // Test API call
+        async function testAPI() {
+            try {
+                console.log('🔄 Testing API call...');
+                const response = await fetch('http://localhost:3001/api/dashboard/order-stats');
+                const data = await response.json();
+                console.log('📊 API Response:', data);
+                
+                if (data.success && data.data) {
+                    const container = document.getElementById('order-stats-container');
+                    container.innerHTML = JSON.stringify(data.data, null, 2);
+                }
+            } catch (error) {
+                console.error('❌ API Error:', error);
+            }
+        }
+        
+        // Run test when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, testing API...');
+            testAPI();
+        });
+    </script>
+</body>
+</html>

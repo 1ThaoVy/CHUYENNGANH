@@ -88,10 +88,9 @@
                 
                 <!-- Main Navigation -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Trang chủ</a>
+                    <a href="index.html" class="text-primary font-semibold px-3 py-2 rounded-lg bg-blue-50">Trang chủ</a>
                     <a href="about.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Giới thiệu</a>
                     <a href="products.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Sản phẩm</a>
-                    <a href="news.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Tin tức</a>
                     <a href="contact.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Liên hệ</a>
                 </div>
 
@@ -145,23 +144,32 @@
                         <span class="text-gray-400">|</span>
                         <a href="register.html" class="text-sm text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Đăng ký</a>
                     </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition">
+                        <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden border-t border-gray-200">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="index.html" class="block px-3 py-2 text-primary font-semibold bg-blue-50 rounded-lg">Trang chủ</a>
+                    <a href="about.html" class="block px-3 py-2 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg">Giới thiệu</a>
+                    <a href="products.html" class="block px-3 py-2 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg">Sản phẩm</a>
+                    <a href="contact.html" class="block px-3 py-2 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg">Liên hệ</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Slideshow -->
+    <!-- Hero Banner -->
     <section class="relative overflow-hidden">
-        <div id="slideshow" class="relative">
-            <!-- Slide 1 -->
-            <div class="slide transition-opacity duration-1000">
-                <img src="http://localhost:3001/images/banner 1.png?v=3" alt="Banner 1" class="w-full h-auto block" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
-            </div>
-
-            <!-- Slide 2 -->
-            <div class="slide absolute inset-0 transition-opacity duration-1000 opacity-0">
-                <img src="http://localhost:3001/images/banner 2.png?v=3" alt="Banner 2" class="w-full h-auto block" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
-            </div>
+        <div class="relative">
+            <img src="http://localhost:3001/images/banner 1.png?v=3" alt="Banner Orianna Shop" class="w-full h-auto block" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
 
             <!-- Navigation Arrows -->
             <button onclick="changeSlide(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 text-gray-800 p-3 rounded-full transition shadow-lg z-10">
@@ -174,14 +182,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
             </button>
-
-            <!-- Dots Indicator -->
-            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
-                <button onclick="goToSlide(0)" class="dot w-3 h-3 rounded-full bg-white shadow-lg transition"></button>
-                <button onclick="goToSlide(1)" class="dot w-3 h-3 rounded-full bg-white bg-opacity-50 shadow-lg transition"></button>
-            </div>
         </div>
     </section>
+
 
     <!-- Flash Sale Banner -->
     <section id="flash-sale-section" class="hidden">
@@ -652,7 +655,9 @@
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/chatbot.js"></script>
     <script src="js/dropdown.js"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/home.js"></script>
     <script src="js/flashSale.js"></script>
     <script>
@@ -678,6 +683,37 @@
         document.getElementById('search-modal')?.addEventListener('click', function(e) {
             if (e.target === this) {
                 toggleSearch();
+            }
+        });
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('mobile-menu-icon');
+            
+            mobileMenu.classList.toggle('hidden');
+            
+            // Change icon
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
+            } else {
+                menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+            }
+        }
+
+        // Toggle user menu
+        function toggleUserMenu() {
+            const userMenu = document.getElementById('user-menu');
+            userMenu.classList.toggle('hidden');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            const userMenu = document.getElementById('user-menu');
+            const userButton = e.target.closest('button[onclick="toggleUserMenu()"]');
+            
+            if (!userButton && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
             }
         });
     </script>

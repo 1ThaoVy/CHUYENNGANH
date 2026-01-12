@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Liên hệ - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white h-screen flex flex-col fixed left-0 top-0 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold">Orianna Admin</h2>
+                    <p class="text-gray-400 text-sm">Quản trị viên</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="px-4 pb-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-1">
+                <a href="index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📊</span>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="manage-products.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">📦</span>
+                    <span>Sản phẩm</span>
+                </a>
+                <a href="orders.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🛒</span>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="manage-categories.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏷️</span>
+                    <span>Danh mục</span>
+                </a>
+                <a href="manage-flash-sale.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚡</span>
+                    <span>Flash Sale</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">👥</span>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="contact-messages.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary text-white mb-2">
+                    <span class="text-xl">💬</span>
+                    <span>Liên hệ</span>
+                </a>
+                <a href="settings.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">⚙️</span>
+                    <span>Cài đặt</span>
+                </a>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-4 mt-4">
+                <a href="../index.html" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 mb-2">
+                    <span class="text-xl">🏠</span>
+                    <span>Về trang chủ</span>
+                </a>
+                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 w-full text-left">
+                    <span class="text-xl">🚪</span>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navigation -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Quản lý Liên hệ</h1>
+                    <p class="text-gray-600 text-sm">Xem và phản hồi tin nhắn từ khách hàng</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Xin chào, <span id="admin-name" class="font-medium">Admin</span></span>
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-envelope text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Tổng tin nhắn</p>
+                            <p id="total-messages" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Chưa đọc</p>
+                            <p id="unread-messages" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-reply text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Đã phản hồi</p>
+                            <p id="replied-messages" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-gray-600 text-sm">Tháng này</p>
+                            <p id="monthly-messages" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                        <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Tất cả</option>
+                            <option value="moi">Mới</option>
+                            <option value="da_doc">Đã đọc</option>
+                            <option value="da_phan_hoi">Đã phản hồi</option>
+                        </select>
+                    </div>
+                    <div class="flex-1"></div>
+                    <button onclick="loadMessages()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90">
+                        <i class="fas fa-search mr-2"></i>
+                        Lọc
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages List -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Danh sách tin nhắn</h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người gửi</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chủ đề</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày gửi</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messages-table" class="bg-white divide-y divide-gray-200">
+                            <!-- Messages will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="pagination" class="px-6 py-4 border-t border-gray-200">
+                    <!-- Pagination will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-xl font-semibold text-gray-900">Chi tiết tin nhắn</h3>
+                    <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div id="message-content" class="p-6">
+                    <!-- Message content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="admin-auth.js"></script>
+    <script src="contact-messages.js"></script>
+</body>
+</html>
