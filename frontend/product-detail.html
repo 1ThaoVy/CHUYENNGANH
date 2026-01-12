@@ -27,7 +27,6 @@
                     <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Trang chủ</a>
                     <a href="about.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Giới thiệu</a>
                     <a href="products.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Sản phẩm</a>
-                    <a href="news.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Tin tức</a>
                     <a href="contact.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Liên hệ</a>
                 </div>
 
@@ -87,6 +86,16 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8 flex-grow">
+        <div class="mb-6">
+            <button onclick="history.back()" 
+                    class="flex items-center text-gray-600 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Quay lại
+            </button>
+        </div>
+        
         <div id="loading" class="text-center py-12">Đang tải...</div>
         <div id="product-detail" class="hidden"></div>
     </div>

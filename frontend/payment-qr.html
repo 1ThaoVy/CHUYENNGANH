@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán QR - Orianna Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#06B6D4' } } }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="http://localhost:3001/images/logo.png?v=2" alt="Logo" class="h-10 w-10 rounded-full">
+                    <span class="text-xl font-bold text-gray-800">Orianna Shop</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <div class="mb-6">
+            <button onclick="history.back()" 
+                    class="flex items-center text-gray-600 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Quay lại
+            </button>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-8 text-center">Thanh toán QR Banking</h1>
+
+            <div id="loading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p class="mt-4 text-gray-600">Đang tạo mã QR thanh toán...</p>
+            </div>
+
+            <div id="payment-content" class="hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- QR Code Section -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4 text-center">Mã QR Demo (Không thể quét)</h2>
+                        
+                        <!-- Bank Selection -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-3">Chọn ngân hàng:</label>
+                            <div id="bank-selection" class="grid grid-cols-3 gap-2">
+                                <!-- Banks will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- QR Code -->
+                        <div class="text-center mb-6">
+                            <div id="qr-container" class="inline-block p-4 bg-white border-2 border-gray-200 rounded-lg">
+                                <img id="qr-image" src="" alt="QR Code" class="w-64 h-64 mx-auto">
+                            </div>
+                        </div>
+
+                        <!-- Payment Status -->
+                        <div id="payment-status" class="text-center">
+                            <div class="flex items-center justify-center space-x-2 text-orange-600">
+                                <div class="animate-pulse w-3 h-3 bg-orange-600 rounded-full"></div>
+                                <span class="font-semibold">Đang chờ thanh toán...</span>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">Vui lòng quét mã QR bằng app ngân hàng của bạn</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Info Section -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Thông tin thanh toán</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Mã đơn hàng:</span>
+                                <span id="order-id" class="font-semibold"></span>
+                            </div>
+                            
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Số tiền:</span>
+                                <span id="amount" class="font-semibold text-primary text-lg"></span>
+                            </div>
+                            
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Ngân hàng:</span>
+                                <span id="bank-name" class="font-semibold"></span>
+                            </div>
+                            
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Số tài khoản:</span>
+                                <span id="account-number" class="font-semibold"></span>
+                            </div>
+                            
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Tên tài khoản:</span>
+                                <span id="account-name" class="font-semibold"></span>
+                            </div>
+                            
+                            <div class="py-2">
+                                <span class="text-gray-600">Nội dung chuyển khoản:</span>
+                                <div class="mt-1 p-2 bg-gray-100 rounded border">
+                                    <span class="text-xs text-red-500 mt-1">Tên người nhận</span>
+                                    <span class="text-xs text-red-500 mt-1">Số điện thoại</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="mt-6">
+                            <button onclick="processPayment()" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition text-lg">
+                                💳 Thanh toán
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white mt-auto">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400">
+            <p>&copy; 2025 Orianna Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        let orderId = null;
+        let selectedBank = 'MB';
+        let paymentData = null;
+        let statusCheckInterval = null;
+
+        // Get order ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        orderId = urlParams.get('order_id');
+
+        if (!orderId) {
+            alert('Không tìm thấy thông tin đơn hàng');
+            window.location.href = 'index.html';
+        }
+
+        // Load supported banks
+        async function loadBanks() {
+            try {
+                const response = await apiCall('/payment/banks', 'GET');
+                const banks = response.data;
+                
+                const bankSelection = document.getElementById('bank-selection');
+                bankSelection.innerHTML = banks.map(bank => `
+                    <button onclick="selectBank('${bank.code}')" 
+                            class="bank-btn p-2 border-2 rounded-lg hover:bg-gray-50 transition ${bank.code === selectedBank ? 'border-primary bg-primary/10' : 'border-gray-200'}"
+                            data-bank="${bank.code}">
+                        <div class="text-xs font-semibold">${bank.name}</div>
+                    </button>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading banks:', error);
+            }
+        }
+
+        // Select bank
+        function selectBank(bankCode) {
+            selectedBank = bankCode;
+            
+            // Update UI
+            document.querySelectorAll('.bank-btn').forEach(btn => {
+                if (btn.dataset.bank === bankCode) {
+                    btn.classList.add('border-primary', 'bg-primary/10');
+                    btn.classList.remove('border-gray-200');
+                } else {
+                    btn.classList.remove('border-primary', 'bg-primary/10');
+                    btn.classList.add('border-gray-200');
+                }
+            });
+            
+            // Generate new QR
+            generateQR();
+        }
+
+        // Generate QR code
+        async function generateQR() {
+            try {
+                const response = await apiCall('/payment/qr', 'POST', {
+                    don_hang_id: orderId,
+                    bank_code: selectedBank
+                }, true);
+                
+                paymentData = response.data;
+                
+                // Update UI
+                document.getElementById('qr-image').src = paymentData.qr_url;
+                document.getElementById('order-id').textContent = paymentData.order_id;
+                document.getElementById('amount').textContent = formatCurrency(paymentData.amount);
+                document.getElementById('bank-name').textContent = paymentData.bank_info.name;
+                document.getElementById('account-number').textContent = paymentData.bank_info.accountNumber;
+                document.getElementById('account-name').textContent = paymentData.bank_info.accountName;
+                
+                // Show content
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('payment-content').classList.remove('hidden');
+                
+                // Start checking payment status
+                startStatusCheck();
+                
+            } catch (error) {
+                console.error('Error generating QR:', error);
+                alert('Có lỗi khi tạo mã QR. Vui lòng thử lại.');
+            }
+        }
+
+        // Check payment status
+        async function checkPaymentStatus() {
+            try {
+                const response = await apiCall(`/payment/status/${orderId}`, 'GET', null, true);
+                const status = response.data.status;
+                
+                if (status === 'completed') {
+                    clearInterval(statusCheckInterval);
+                    document.getElementById('success-modal').classList.remove('hidden');
+                } else if (status === 'failed') {
+                    alert('Thanh toán thất bại. Vui lòng thử lại.');
+                } else {
+                    console.log('Payment status:', status);
+                }
+                
+            } catch (error) {
+                console.error('Error checking payment status:', error);
+            }
+        }
+
+        // Start automatic status checking
+        function startStatusCheck() {
+            statusCheckInterval = setInterval(checkPaymentStatus, 5000); // Check every 5 seconds
+        }
+
+        // Go to order detail
+        function goToOrderDetail() {
+            window.location.href = `order-detail.html?id=${orderId}`;
+        }
+
+        // Process payment (simplified)
+        async function processPayment() {
+            try {
+                // Simulate payment
+                const response = await apiCall('/payment/simulate/' + orderId, 'POST', {}, true);
+                
+                if (response.success) {
+                    clearInterval(statusCheckInterval);
+                    
+                    // Update payment status display
+                    const statusDiv = document.getElementById('payment-status');
+                    statusDiv.innerHTML = '<div class="flex items-center justify-center space-x-2 text-green-600">' +
+                        '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">' +
+                        '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>' +
+                        '</svg>' +
+                        '<span class="font-semibold">Thanh toán thành công!</span>' +
+                        '</div>' +
+                        '<p class="text-sm text-gray-500 mt-2">Mã giao dịch: ' + response.data.transaction_id + '</p>';
+                    
+                    // Show success and redirect
+                    setTimeout(function() {
+                        alert('✅ Thanh toán thành công! Hóa đơn sẽ được gửi qua email.');
+                        window.location.href = 'order-detail.html?id=' + orderId;
+                    }, 1500);
+                }
+                
+            } catch (error) {
+                alert('Lỗi thanh toán: ' + error.message);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBanks().then(() => {
+                generateQR();
+            });
+        });
+
+        // Cleanup interval on page unload
+        window.addEventListener('beforeunload', function() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+        });
+    </script>
+</body>
+</html>

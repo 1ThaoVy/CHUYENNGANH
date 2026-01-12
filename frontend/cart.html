@@ -27,7 +27,6 @@
                     <a href="index.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Trang chủ</a>
                     <a href="about.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Giới thiệu</a>
                     <a href="products.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Sản phẩm</a>
-                    <a href="news.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Tin tức</a>
                     <a href="contact.html" class="text-gray-700 hover:text-primary px-3 py-2 rounded-lg hover:bg-gray-50">Liên hệ</a>
                 </div>
 
@@ -87,7 +86,16 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8 flex-grow">
-        <h1 class="text-3xl font-bold mb-8">Giỏ hàng của bạn</h1>
+        <div class="flex items-center mb-8">
+            <button onclick="history.back()" 
+                    class="flex items-center text-gray-600 hover:text-primary mr-4 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Quay lại
+            </button>
+            <h1 class="text-3xl font-bold">Giỏ hàng của bạn</h1>
+        </div>
 
         <div id="empty-cart" class="hidden text-center py-12">
             <h2 class="text-2xl font-bold mb-4">Giỏ hàng trống</h2>
@@ -215,7 +223,21 @@
 
             cartItems.innerHTML = cart.map(item => `
                 <div class="bg-white rounded-lg shadow-md p-4 flex gap-4">
-                    <div class="w-24 h-24 bg-gray-200 flex-shrink-0 rounded"></div>
+                    <div class="w-24 h-24 bg-gray-200 flex-shrink-0 rounded overflow-hidden">
+                        ${item.url_hinh_anh_chinh ? `
+                            <img src="http://localhost:3001${item.url_hinh_anh_chinh}" 
+                                 alt="${item.ten_san_pham}" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                            <div style="display:none" class="w-full h-full flex items-center justify-center">
+                                <span class="text-gray-400 text-xs">Hình ảnh</span>
+                            </div>
+                        ` : `
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="text-gray-400 text-xs">Hình ảnh</span>
+                            </div>
+                        `}
+                    </div>
                     
                     <div class="flex-1">
                         <h3 class="font-semibold mb-1">${item.ten_san_pham}</h3>

@@ -25,7 +25,15 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8 flex-grow">
-        <h1 class="text-3xl font-bold mb-8">Thanh toán</h1>
+        <div class="flex items-center mb-8">
+            <button onclick="history.back()" 
+                    class="flex items-center text-gray-600 hover:text-primary mr-4 p-2 rounded-lg hover:bg-gray-100 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <h1 class="text-3xl font-bold">Thanh toán</h1>
+        </div>
 
         <div id="error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
 
@@ -34,31 +42,82 @@
                 <form id="checkout-form" class="bg-white rounded-lg shadow-md p-6 space-y-4">
                     <h2 class="text-xl font-bold mb-4">Thông tin giao hàng</h2>
 
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Tên người nhận *</label>
-                        <input type="text" id="ten_nguoi_nhan" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    <!-- Thông tin tài khoản mặc định -->
+                    <div id="default-info" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <h3 class="font-semibold text-blue-800 mb-2">Thông tin tài khoản</h3>
+                        <div id="user-info" class="text-sm text-blue-700 space-y-1">
+                            <!-- Thông tin sẽ được load từ JavaScript -->
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Số điện thoại *</label>
-                        <input type="tel" id="sdt_nguoi_nhan" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    <!-- Checkbox để chọn địa chỉ giao hàng khác -->
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="use-different-address" 
+                               class="mr-3 text-primary focus:ring-primary">
+                        <label for="use-different-address" class="text-sm font-medium">
+                            Giao hàng đến địa chỉ khác
+                        </label>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold mb-2">Địa chỉ giao hàng *</label>
-                        <textarea id="dia_chi_giao_hang" rows="3" required
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    <!-- Form thông tin giao hàng (ẩn mặc định) -->
+                    <div id="shipping-form" class="hidden space-y-4 border-t pt-4">
+                        <h3 class="font-semibold text-gray-800">Thông tin người nhận</h3>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Tên người nhận *</label>
+                            <input type="text" id="ten_nguoi_nhan_khac" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Số điện thoại *</label>
+                            <input type="tel" id="sdt_nguoi_nhan_khac" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Địa chỉ giao hàng *</label>
+                            <textarea id="dia_chi_giao_hang_khac" rows="3" 
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
                     </div>
+
+                    <!-- Hidden inputs để lưu thông tin thực tế sẽ gửi -->
+                    <input type="hidden" id="ten_nguoi_nhan">
+                    <input type="hidden" id="sdt_nguoi_nhan">
+                    <input type="hidden" id="dia_chi_giao_hang">
 
                     <div>
                         <label class="block text-sm font-semibold mb-2">Phương thức thanh toán</label>
-                        <select id="phuong_thuc_thanh_toan"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                            <option value="COD">Thanh toán khi nhận hàng (COD)</option>
-                            <option value="Banking">Chuyển khoản ngân hàng</option>
-                        </select>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="phuong_thuc_thanh_toan" value="COD" checked
+                                       class="mr-3 text-primary focus:ring-primary">
+                                <div class="flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                                    </svg>
+                                    <div>
+                                        <div class="font-semibold">Thanh toán khi nhận hàng (COD)</div>
+                                        <div class="text-sm text-gray-500">Thanh toán bằng tiền mặt khi nhận hàng</div>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="phuong_thuc_thanh_toan" value="QR_Banking"
+                                       class="mr-3 text-primary focus:ring-primary">
+                                <div class="flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                    </svg>
+                                    <div>
+                                        <div class="font-semibold">Thanh toán QR Banking</div>
+                                        <div class="text-sm text-gray-500">Quét mã QR để chuyển khoản ngân hàng</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <button type="submit" 
@@ -116,13 +175,65 @@
             window.location.href = 'login.html';
         }
 
-        // Load user info
+        // Load user info and display default info
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user) {
-            document.getElementById('ten_nguoi_nhan').value = user.ho_ten || '';
-            document.getElementById('sdt_nguoi_nhan').value = user.so_dien_thoai || '';
-            document.getElementById('dia_chi_giao_hang').value = user.dia_chi || '';
+        
+        function displayUserInfo() {
+            const userInfoDiv = document.getElementById('user-info');
+            if (user) {
+                userInfoDiv.innerHTML = `
+                    <div><strong>Tên:</strong> ${user.ho_ten || 'Chưa cập nhật'}</div>
+                    <div><strong>Số điện thoại:</strong> ${user.so_dien_thoai || 'Chưa cập nhật'}</div>
+                    <div><strong>Địa chỉ:</strong> ${user.dia_chi || 'Chưa cập nhật'}</div>
+                `;
+                
+                // Set default values to hidden inputs
+                document.getElementById('ten_nguoi_nhan').value = user.ho_ten || '';
+                document.getElementById('sdt_nguoi_nhan').value = user.so_dien_thoai || '';
+                document.getElementById('dia_chi_giao_hang').value = user.dia_chi || '';
+            }
         }
+
+        // Handle different address checkbox
+        document.getElementById('use-different-address').addEventListener('change', function() {
+            const shippingForm = document.getElementById('shipping-form');
+            const isChecked = this.checked;
+            
+            if (isChecked) {
+                shippingForm.classList.remove('hidden');
+                // Clear and focus on first input
+                document.getElementById('ten_nguoi_nhan_khac').value = '';
+                document.getElementById('sdt_nguoi_nhan_khac').value = '';
+                document.getElementById('dia_chi_giao_hang_khac').value = '';
+                document.getElementById('ten_nguoi_nhan_khac').focus();
+            } else {
+                shippingForm.classList.add('hidden');
+                // Reset to user default info
+                document.getElementById('ten_nguoi_nhan').value = user.ho_ten || '';
+                document.getElementById('sdt_nguoi_nhan').value = user.so_dien_thoai || '';
+                document.getElementById('dia_chi_giao_hang').value = user.dia_chi || '';
+            }
+        });
+
+        // Update hidden inputs when different address form changes
+        function updateShippingInfo() {
+            const useDifferentAddress = document.getElementById('use-different-address').checked;
+            
+            if (useDifferentAddress) {
+                document.getElementById('ten_nguoi_nhan').value = document.getElementById('ten_nguoi_nhan_khac').value;
+                document.getElementById('sdt_nguoi_nhan').value = document.getElementById('sdt_nguoi_nhan_khac').value;
+                document.getElementById('dia_chi_giao_hang').value = document.getElementById('dia_chi_giao_hang_khac').value;
+            } else {
+                document.getElementById('ten_nguoi_nhan').value = user.ho_ten || '';
+                document.getElementById('sdt_nguoi_nhan').value = user.so_dien_thoai || '';
+                document.getElementById('dia_chi_giao_hang').value = user.dia_chi || '';
+            }
+        }
+
+        // Add event listeners to different address inputs
+        document.getElementById('ten_nguoi_nhan_khac').addEventListener('input', updateShippingInfo);
+        document.getElementById('sdt_nguoi_nhan_khac').addEventListener('input', updateShippingInfo);
+        document.getElementById('dia_chi_giao_hang_khac').addEventListener('input', updateShippingInfo);
 
         // Display order summary
         function displayOrderSummary() {
@@ -146,11 +257,27 @@
             const errorDiv = document.getElementById('error');
             errorDiv.classList.add('hidden');
 
+            // Update shipping info before validation
+            updateShippingInfo();
+
+            // Validate required fields
+            const tenNguoiNhan = document.getElementById('ten_nguoi_nhan').value.trim();
+            const sdtNguoiNhan = document.getElementById('sdt_nguoi_nhan').value.trim();
+            const diaChiGiaoHang = document.getElementById('dia_chi_giao_hang').value.trim();
+
+            if (!tenNguoiNhan || !sdtNguoiNhan || !diaChiGiaoHang) {
+                errorDiv.textContent = 'Vui lòng điền đầy đủ thông tin giao hàng';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const paymentMethod = document.querySelector('input[name="phuong_thuc_thanh_toan"]:checked').value;
+
             const orderData = {
-                ten_nguoi_nhan: document.getElementById('ten_nguoi_nhan').value,
-                sdt_nguoi_nhan: document.getElementById('sdt_nguoi_nhan').value,
-                dia_chi_giao_hang: document.getElementById('dia_chi_giao_hang').value,
-                phuong_thuc_thanh_toan: document.getElementById('phuong_thuc_thanh_toan').value,
+                ten_nguoi_nhan: tenNguoiNhan,
+                sdt_nguoi_nhan: sdtNguoiNhan,
+                dia_chi_giao_hang: diaChiGiaoHang,
+                phuong_thuc_thanh_toan: paymentMethod,
                 items: cart.map(item => ({
                     san_pham_id: item.san_pham_id,
                     so_luong: item.quantity
@@ -158,20 +285,26 @@
             };
 
             try {
-                const data = await apiCall('/orders', {
-                    method: 'POST',
-                    body: JSON.stringify(orderData)
-                });
+                const data = await apiCall('/orders', 'POST', orderData, true);
 
-                clearCart();
-                alert('Đặt hàng thành công!');
-                window.location.href = `order-detail.html?id=${data.data.don_hang_id}`;
+                if (paymentMethod === 'QR_Banking') {
+                    // Chuyển đến trang thanh toán QR
+                    clearCart();
+                    window.location.href = `payment-qr.html?order_id=${data.data.don_hang_id}`;
+                } else {
+                    // COD - chuyển đến trang chi tiết đơn hàng
+                    clearCart();
+                    alert('Đặt hàng thành công!');
+                    window.location.href = `order-detail.html?id=${data.data.don_hang_id}`;
+                }
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.classList.remove('hidden');
             }
         });
 
+        // Initialize
+        displayUserInfo();
         displayOrderSummary();
     </script>
 </body>
