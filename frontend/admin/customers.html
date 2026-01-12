@@ -199,7 +199,7 @@
         async function loadCustomers() {
             try {
                 console.log('Loading customers...');
-                const response = await apiCall('/auth/users');
+                const response = await apiCall('/auth/users', 'GET', null, true);
                 customers = response.data || [];
                 console.log('Customers loaded:', customers.length);
                 

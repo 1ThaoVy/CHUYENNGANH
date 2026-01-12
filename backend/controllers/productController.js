@@ -10,25 +10,35 @@ exports.getProducts = async (req, res) => {
       SELECT sp.*, dm.ten_danh_muc, dm.slug as danh_muc_slug
       FROM san_pham sp
       LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.danh_muc_id
-      WHERE sp.trang_thai_hien_thi = 1
     `;
     const params = [];
+    let whereConditions = [];
+
+    // Nếu không phải admin, chỉ hiển thị sản phẩm được phép
+    if (!req.user || req.user.vai_tro !== 'admin') {
+      whereConditions.push('sp.trang_thai_hien_thi = 1');
+    }
 
     // Lọc theo danh mục
     if (danh_muc_id) {
-      query += ' AND sp.danh_muc_id = ?';
+      whereConditions.push('sp.danh_muc_id = ?');
       params.push(danh_muc_id);
     }
 
     // Tìm kiếm theo tên
     if (search) {
-      query += ' AND sp.ten_san_pham LIKE ?';
+      whereConditions.push('sp.ten_san_pham LIKE ?');
       params.push(`%${search}%`);
     }
 
     // Lọc sản phẩm giảm giá
     if (giam_gia === 'true') {
-      query += ' AND sp.phan_tram_giam_gia > 0';
+      whereConditions.push('sp.phan_tram_giam_gia > 0');
+    }
+
+    // Thêm WHERE clause nếu có điều kiện
+    if (whereConditions.length > 0) {
+      query += ' WHERE ' + whereConditions.join(' AND ');
     }
 
     // Sắp xếp
@@ -48,18 +58,30 @@ exports.getProducts = async (req, res) => {
     const [products] = await db.execute(query, params);
 
     // Đếm tổng số sản phẩm
-    let countQuery = 'SELECT COUNT(*) as total FROM san_pham WHERE trang_thai_hien_thi = 1';
+    let countQuery = 'SELECT COUNT(*) as total FROM san_pham sp';
+    let countWhereConditions = [];
     const countParams = [];
+
+    // Nếu không phải admin, chỉ đếm sản phẩm được phép
+    if (!req.user || req.user.vai_tro !== 'admin') {
+      countWhereConditions.push('sp.trang_thai_hien_thi = 1');
+    }
+
     if (danh_muc_id) {
-      countQuery += ' AND danh_muc_id = ?';
+      countWhereConditions.push('sp.danh_muc_id = ?');
       countParams.push(danh_muc_id);
     }
     if (search) {
-      countQuery += ' AND ten_san_pham LIKE ?';
+      countWhereConditions.push('sp.ten_san_pham LIKE ?');
       countParams.push(`%${search}%`);
     }
     if (giam_gia === 'true') {
-      countQuery += ' AND phan_tram_giam_gia > 0';
+      countWhereConditions.push('sp.phan_tram_giam_gia > 0');
+    }
+
+    // Thêm WHERE clause nếu có điều kiện
+    if (countWhereConditions.length > 0) {
+      countQuery += ' WHERE ' + countWhereConditions.join(' AND ');
     }
 
     const [countResult] = await db.execute(countQuery, countParams);

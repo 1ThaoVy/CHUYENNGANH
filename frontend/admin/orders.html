@@ -162,7 +162,7 @@
 
         async function loadOrders() {
             try {
-                const data = await apiCall('/orders/admin/all');
+                const data = await apiCall('/orders/admin/all', 'GET', null, true);
                 allOrders = data.data;
                 displayOrders(allOrders);
             } catch (error) {
@@ -250,10 +250,7 @@
             const statusId = document.getElementById('trang_thai_don_hang_id').value;
 
             try {
-                await apiCall(`/orders/${orderId}/status`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ trang_thai_don_hang_id: parseInt(statusId) })
-                });
+                await apiCall(`/orders/${orderId}/status`, 'PUT', { trang_thai_don_hang_id: parseInt(statusId) }, true);
                 
                 alert('Cập nhật trạng thái thành công!');
                 closeStatusModal();

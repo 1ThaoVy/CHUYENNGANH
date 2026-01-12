@@ -21,7 +21,7 @@ async function loadProducts(page = 1) {
     currentPage = page;
     console.log('Loading products...');
     try {
-        const data = await apiCall(`/products?page=${page}&limit=10`);
+        const data = await apiCall(`/products?page=${page}&limit=10`, 'GET', null, true);
         console.log('Products loaded:', data);
         displayProducts(data.data);
         displayPagination(data.pagination);
@@ -98,7 +98,7 @@ function showAddModal() {
 // Edit product
 async function editProduct(id) {
     try {
-        const data = await apiCall(`/products/${id}`);
+        const data = await apiCall(`/products/${id}`, 'GET', null, true);
         const product = data.data;
         
         document.getElementById('modal-title').textContent = 'Sửa sản phẩm';
@@ -129,7 +129,7 @@ async function deleteProduct(id) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
     
     try {
-        await apiCall(`/products/${id}`, 'DELETE');
+        await apiCall(`/products/${id}`, 'DELETE', null, true);
         alert('Xóa thành công!');
         loadProducts(currentPage);
     } catch (error) {
@@ -221,11 +221,11 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
     try {
         if (productId) {
             // Update
-            await apiCall(`/products/${productId}`, 'PUT', formData);
+            await apiCall(`/products/${productId}`, 'PUT', formData, true);
             alert('Cập nhật thành công!');
         } else {
             // Create
-            await apiCall('/products', 'POST', formData);
+            await apiCall('/products', 'POST', formData, true);
             alert('Thêm sản phẩm thành công!');
         }
         

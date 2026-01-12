@@ -8,7 +8,8 @@ async function apiCall(endpoint, method = 'GET', data = null, requireAuth = fals
         'Content-Type': 'application/json'
     };
 
-    if (token || requireAuth) {
+    // Always add token if available, or if requireAuth is true
+    if (token && (requireAuth || token)) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -27,6 +28,13 @@ async function apiCall(endpoint, method = 'GET', data = null, requireAuth = fals
         const responseData = await response.json();
 
         if (!response.ok) {
+            // Handle authentication errors
+            if (response.status === 401 && requireAuth) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '../login.html';
+                return;
+            }
             throw new Error(responseData.message || 'Có lỗi xảy ra');
         }
 

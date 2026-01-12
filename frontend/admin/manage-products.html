@@ -422,14 +422,14 @@
             e.preventDefault();
             
             const formData = {
-                ten_san_pham: document.getElementById('product-name').value,
-                danh_muc_id: document.getElementById('product-category').value,
-                mo_ta: document.getElementById('product-description').value,
-                gia_ban: document.getElementById('product-price').value,
-                so_luong_ton: document.getElementById('product-stock').value,
-                dung_tich: document.getElementById('product-volume').value,
-                url_hinh_anh_chinh: document.getElementById('product-image').value,
-                phan_tram_giam_gia: document.getElementById('product-discount').value
+                ten_san_pham: document.getElementById('ten_san_pham').value,
+                danh_muc_id: document.getElementById('danh_muc_id').value,
+                mo_ta: document.getElementById('mo_ta').value,
+                gia_ban: document.getElementById('gia_ban').value,
+                so_luong_ton: document.getElementById('so_luong_ton').value,
+                dung_tich: document.getElementById('dung_tich').value,
+                url_hinh_anh_chinh: document.getElementById('url_hinh_anh_chinh').value,
+                phan_tram_giam_gia: document.getElementById('phan_tram_giam_gia').value || 0
             };
 
             // Validation
@@ -452,10 +452,10 @@
                 const productId = document.getElementById('product-id').value;
                 
                 if (productId) {
-                    await apiCall(`/products/${productId}`, 'PUT', formData);
+                    await apiCall(`/products/${productId}`, 'PUT', formData, true);
                     alert('Cập nhật sản phẩm thành công!');
                 } else {
-                    await apiCall('/products', 'POST', formData);
+                    await apiCall('/products', 'POST', formData, true);
                     alert('Thêm sản phẩm thành công!');
                 }
                 

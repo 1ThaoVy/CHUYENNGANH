@@ -214,22 +214,27 @@ exports.getTopProducts = async (req, res) => {
 // Lấy thống kê đơn hàng theo trạng thái
 exports.getOrderStats = async (req, res) => {
   try {
+    console.log('🔄 Getting order stats...');
+    
     const [orderStats] = await db.query(`
       SELECT 
         ttdh.ten_trang_thai,
-        ttdh.mau_sac,
+        ttdh.ma_mau_sac as mau_sac,
         COUNT(dh.don_hang_id) as count
       FROM trang_thai_don_hang ttdh
-      LEFT JOIN don_hang dh ON ttdh.trang_thai_don_hang_id = dh.trang_thai_don_hang_id
-      GROUP BY ttdh.trang_thai_don_hang_id
-      ORDER BY ttdh.trang_thai_don_hang_id
+      LEFT JOIN don_hang dh ON ttdh.trang_thai_id = dh.trang_thai_don_hang_id
+      GROUP BY ttdh.trang_thai_id, ttdh.ten_trang_thai, ttdh.ma_mau_sac
+      ORDER BY ttdh.trang_thai_id
     `);
+
+    console.log('📊 Order stats query result:', orderStats);
 
     res.json({
       success: true,
       data: orderStats
     });
   } catch (error) {
+    console.error('❌ Error in getOrderStats:', error);
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };

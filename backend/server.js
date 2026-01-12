@@ -27,15 +27,23 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
-app.use('/api/news', require('./routes/newsRoutes'));
-app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/flash-sale', require('./routes/flashSaleRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
+app.use('/api/chatbot', require('./routes/chatbotRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/reviews', require('./routes/reviewRoutes'));
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server đang hoạt động' });
+});
+
+// Redirect for admin routes
+app.get('/admin/contact-messages', (req, res) => {
+  res.redirect('/admin/contact-messages.html');
 });
 
 // 404 handler

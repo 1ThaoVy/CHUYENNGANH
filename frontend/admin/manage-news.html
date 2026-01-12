@@ -252,7 +252,7 @@
                 let url = `/news/admin/all?page=${page}&limit=10`;
                 if (currentStatus) url += `&status=${currentStatus}`;
 
-                const response = await apiCall(url);
+                const response = await apiCall(url, 'GET', null, true);
                 const { data: articles, pagination } = response;
 
                 const tbody = document.getElementById('articles-table-body');
@@ -400,7 +400,7 @@
             if (!confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
 
             try {
-                await apiCall(`/news/admin/${id}`, 'DELETE');
+                await apiCall(`/news/admin/${id}`, 'DELETE', null, true);
                 alert('Xóa bài viết thành công!');
                 loadArticles(currentPage);
             } catch (error) {
@@ -574,10 +574,10 @@
                 const articleId = document.getElementById('article-id').value;
                 
                 if (articleId) {
-                    await apiCall(`/news/admin/${articleId}`, 'PUT', formData);
+                    await apiCall(`/news/admin/${articleId}`, 'PUT', formData, true);
                     alert('Cập nhật bài viết thành công!');
                 } else {
-                    const response = await apiCall('/news/admin', 'POST', formData);
+                    const response = await apiCall('/news/admin', 'POST', formData, true);
                     console.log('✅ Response:', response);
                     alert('Tạo bài viết thành công!');
                 }

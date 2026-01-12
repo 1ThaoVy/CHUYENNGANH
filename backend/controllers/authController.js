@@ -34,7 +34,14 @@ exports.register = async (req, res) => {
       success: true,
       message: 'Đăng ký thành công',
       token,
-      user: { nguoi_dung_id: result.insertId, ho_ten, email, vai_tro: 'khach_hang' }
+      user: { 
+        nguoi_dung_id: result.insertId, 
+        ho_ten, 
+        email, 
+        so_dien_thoai, 
+        dia_chi, 
+        vai_tro: 'khach_hang' 
+      }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
@@ -80,6 +87,8 @@ exports.login = async (req, res) => {
         nguoi_dung_id: user.nguoi_dung_id,
         ho_ten: user.ho_ten,
         email: user.email,
+        so_dien_thoai: user.so_dien_thoai,
+        dia_chi: user.dia_chi,
         vai_tro: user.vai_tro
       }
     });

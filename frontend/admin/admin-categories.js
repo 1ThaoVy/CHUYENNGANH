@@ -5,7 +5,7 @@ let categories = [];
 async function loadCategories() {
     try {
         console.log('Loading categories...');
-        const data = await apiCall('/categories');
+        const data = await apiCall('/categories', 'GET', null, true);
         categories = data.data;
         displayCategories(categories);
         console.log('Categories loaded:', categories);
@@ -77,7 +77,7 @@ async function deleteCategory(id) {
     if (!confirm('Bạn có chắc muốn xóa danh mục này? Tất cả sản phẩm trong danh mục sẽ bị ảnh hưởng.')) return;
     
     try {
-        await apiCall(`/categories/${id}`, 'DELETE');
+        await apiCall(`/categories/${id}`, 'DELETE', null, true);
         alert('Xóa danh mục thành công!');
         loadCategories();
     } catch (error) {
@@ -142,11 +142,11 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 if (categoryId) {
                     // Update
-                    await apiCall(`/categories/${categoryId}`, 'PUT', formData);
+                    await apiCall(`/categories/${categoryId}`, 'PUT', formData, true);
                     alert('Cập nhật danh mục thành công!');
                 } else {
                     // Create
-                    await apiCall('/categories', 'POST', formData);
+                    await apiCall('/categories', 'POST', formData, true);
                     alert('Thêm danh mục thành công!');
                 }
                 

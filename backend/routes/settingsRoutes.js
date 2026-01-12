@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
-const { getSettings, updateSettings, getPublicSettings } = require('../controllers/settingsController');
+const { getSettings, updateSettings, getPublicSettings } = require('../controllers/settingsController-simple');
 
 // Public routes
 router.get('/public', getPublicSettings);

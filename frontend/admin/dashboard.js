@@ -23,7 +23,7 @@ async function updateAllRevenueCharts(period) {
     try {
         console.log(`🔄 Loading revenue data for period: ${period}`);
         // Fetch real revenue data from API
-        const revenueData = await apiCall(`/dashboard/revenue?period=${period}`);
+        const revenueData = await apiCall(`/dashboard/revenue?period=${period}`, 'GET', null, true);
         console.log('📈 Revenue data received:', revenueData);
         const chartData = revenueData.data;
         
@@ -271,7 +271,7 @@ async function loadDashboard() {
 async function loadOverviewStats() {
     try {
         console.log('🔄 Loading overview stats...');
-        const data = await apiCall('/dashboard/overview');
+        const data = await apiCall('/dashboard/overview', 'GET', null, true);
         console.log('📊 Overview data received:', data);
         
         document.getElementById('total-products').textContent = data.data.totalProducts;
@@ -294,7 +294,7 @@ async function loadOverviewStats() {
 // Load recent orders
 async function loadRecentOrders() {
     try {
-        const data = await apiCall('/dashboard/recent-orders');
+        const data = await apiCall('/dashboard/recent-orders', 'GET', null, true);
         
         const container = document.getElementById('recent-orders');
         if (data.data && data.data.length > 0) {
@@ -322,7 +322,7 @@ async function loadRecentOrders() {
 // Load top products
 async function loadTopProducts() {
     try {
-        const data = await apiCall('/dashboard/top-products');
+        const data = await apiCall('/dashboard/top-products', 'GET', null, true);
         
         const container = document.getElementById('top-products');
         if (data.data && data.data.length > 0) {
@@ -356,7 +356,7 @@ async function loadTopProducts() {
 // Load order statistics
 async function loadOrderStats() {
     try {
-        const data = await apiCall('/dashboard/order-stats');
+        const data = await apiCall('/dashboard/order-stats', 'GET', null, true);
         
         // Update order status chart if needed
         console.log('Order stats loaded:', data.data);
