@@ -139,6 +139,91 @@ exports.updateOrderStatus = async (req, res) => {
 };
 
 
+// Hủy đơn hàng (chỉ cho đơn hàng COD và trạng thái chờ xử lý)
+exports.cancelOrder = async (req, res) => {
+  const connection = await db.getConnection();
+  
+  try {
+    await connection.beginTransaction();
+
+    const { id } = req.params;
+    const { ly_do_huy } = req.body;
+    const nguoi_dung_id = req.user.nguoi_dung_id;
+
+    // Kiểm tra đơn hàng có tồn tại và thuộc về user không
+    const [orders] = await connection.query(`
+      SELECT * FROM don_hang 
+      WHERE don_hang_id = ? AND nguoi_dung_id = ?
+    `, [id, nguoi_dung_id]);
+
+    if (orders.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Không tìm thấy đơn hàng hoặc bạn không có quyền hủy đơn hàng này' 
+      });
+    }
+
+    const order = orders[0];
+
+    // Kiểm tra điều kiện hủy đơn hàng
+    if (order.trang_thai_don_hang_id !== 1) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Chỉ có thể hủy đơn hàng đang ở trạng thái "Chờ xử lý"' 
+      });
+    }
+
+    if (order.phuong_thuc_thanh_toan !== 'COD') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Chỉ có thể hủy đơn hàng thanh toán COD. Đơn hàng thanh toán online vui lòng liên hệ admin.' 
+      });
+    }
+
+    // Lấy chi tiết đơn hàng để hoàn lại số lượng tồn kho
+    const [orderItems] = await connection.query(`
+      SELECT san_pham_id, so_luong 
+      FROM chi_tiet_don_hang 
+      WHERE don_hang_id = ?
+    `, [id]);
+
+    // Hoàn lại số lượng tồn kho cho từng sản phẩm
+    for (const item of orderItems) {
+      await connection.query(`
+        UPDATE san_pham 
+        SET so_luong_ton = so_luong_ton + ? 
+        WHERE san_pham_id = ?
+      `, [item.so_luong, item.san_pham_id]);
+    }
+
+    // Cập nhật trạng thái đơn hàng thành "Đã hủy" (giả sử ID = 5)
+    await connection.query(`
+      UPDATE don_hang 
+      SET trang_thai_don_hang_id = 5, 
+          ly_do_huy = ?, 
+          ngay_huy = NOW() 
+      WHERE don_hang_id = ?
+    `, [ly_do_huy || 'Khách hàng hủy đơn hàng', id]);
+
+    await connection.commit();
+
+    res.json({ 
+      success: true, 
+      message: 'Hủy đơn hàng thành công. Số lượng sản phẩm đã được hoàn lại kho.' 
+    });
+
+  } catch (error) {
+    await connection.rollback();
+    res.status(500).json({ 
+      success: false, 
+      message: 'Lỗi server khi hủy đơn hàng', 
+      error: error.message 
+    });
+  } finally {
+    connection.release();
+  }
+};
+
 // Lấy tất cả đơn hàng (Admin only)
 exports.getAllOrders = async (req, res) => {
   try {

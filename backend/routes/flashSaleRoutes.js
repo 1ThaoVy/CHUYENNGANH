@@ -174,6 +174,30 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
     }
 });
 
+// Lấy sản phẩm của flash sale cụ thể (admin)
+router.get('/:id/products', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const query = `
+            SELECT sp.*, fsp.gia_flash_sale, fsp.so_luong_gioi_han, fsp.so_luong_da_ban,
+                   dm.ten_danh_muc,
+                   ROUND(((sp.gia_ban - fsp.gia_flash_sale) / sp.gia_ban) * 100) as phan_tram_giam_gia_flash
+            FROM flash_sale_san_pham fsp
+            JOIN san_pham sp ON fsp.san_pham_id = sp.san_pham_id
+            LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.danh_muc_id
+            WHERE fsp.ma_giam_gia_id = ? AND sp.trang_thai_hien_thi = TRUE
+            ORDER BY fsp.created_at DESC
+        `;
+        
+        const [results] = await db.execute(query, [id]);
+        res.json({ success: true, data: results });
+    } catch (error) {
+        console.error('Error getting flash sale products:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server' });
+    }
+});
+
 // Thêm sản phẩm vào flash sale (admin)
 router.post('/:id/products', authenticateToken, requireAdmin, async (req, res) => {
     try {

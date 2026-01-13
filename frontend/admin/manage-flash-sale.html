@@ -197,6 +197,100 @@
         </div>
     </div>
 
+    <!-- Manage Products Modal -->
+    <div id="products-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="products-modal-title" class="text-xl font-bold">Quản lý sản phẩm Flash Sale</h2>
+                    <button onclick="hideProductsModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Available Products -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Sản phẩm có sẵn</h3>
+                        <div class="border rounded-lg p-4 max-h-96 overflow-y-auto">
+                            <div id="available-products" class="space-y-2">
+                                <div class="text-center py-4">Đang tải...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flash Sale Products -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Sản phẩm trong Flash Sale</h3>
+                        <div class="border rounded-lg p-4 max-h-96 overflow-y-auto">
+                            <div id="flash-sale-products" class="space-y-2">
+                                <div class="text-center py-4">Đang tải...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6">
+                    <button onclick="hideProductsModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product to Flash Sale Modal -->
+    <div id="add-product-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Thêm sản phẩm vào Flash Sale</h2>
+                    <button onclick="hideAddProductModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="add-product-form" onsubmit="addProductToFlashSale(event)">
+                    <input type="hidden" id="selected-flash-sale-id">
+                    <input type="hidden" id="selected-product-id">
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Sản phẩm</label>
+                        <div id="selected-product-info" class="p-3 bg-gray-50 rounded-lg">
+                            <!-- Product info will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Giá Flash Sale <span class="text-red-500">*</span></label>
+                        <input type="number" id="flash-sale-price" required min="0" step="1000"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Số lượng giới hạn</label>
+                        <input type="number" id="quantity-limit" min="1"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                               placeholder="Để trống nếu không giới hạn">
+                    </div>
+
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="hideAddProductModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Hủy
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600">
+                            Thêm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script>
@@ -263,6 +357,9 @@
                         </div>
                         
                         <div class="flex justify-end gap-2">
+                            <button onclick="manageProducts(${flashSale.ma_giam_gia_id})" class="text-green-600 hover:text-green-800 text-sm">
+                                Quản lý sản phẩm
+                            </button>
                             <button onclick="editFlashSale(${flashSale.ma_giam_gia_id})" class="text-blue-600 hover:text-blue-800 text-sm">
                                 Sửa
                             </button>
@@ -391,6 +488,176 @@
                 hideModal();
             }
         });
+
+        // Manage products for flash sale
+        let currentFlashSaleId = null;
+        let allProducts = [];
+        let flashSaleProducts = [];
+
+        async function manageProducts(flashSaleId) {
+            currentFlashSaleId = flashSaleId;
+            const flashSale = flashSales.find(fs => fs.ma_giam_gia_id === flashSaleId);
+            
+            document.getElementById('products-modal-title').textContent = 
+                `Quản lý sản phẩm - ${flashSale.tieu_de_flash_sale || flashSale.ma_code}`;
+            
+            document.getElementById('products-modal').classList.remove('hidden');
+            
+            // Load products
+            await loadAllProducts();
+            await loadFlashSaleProducts(flashSaleId);
+        }
+
+        async function loadAllProducts() {
+            try {
+                // Sử dụng API admin để lấy tất cả sản phẩm
+                const data = await apiCall('/products/admin/all', 'GET', null, true);
+                allProducts = data.data;
+                renderAvailableProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('available-products').innerHTML = 
+                    '<div class="text-center text-red-500 py-4">Lỗi tải sản phẩm</div>';
+            }
+        }
+
+        async function loadFlashSaleProducts(flashSaleId) {
+            try {
+                const data = await apiCall(`/flash-sale/${flashSaleId}/products`, 'GET', null, true);
+                flashSaleProducts = data.data || [];
+                renderFlashSaleProducts();
+            } catch (error) {
+                console.error('Error loading flash sale products:', error);
+                document.getElementById('flash-sale-products').innerHTML = 
+                    '<div class="text-center text-red-500 py-4">Lỗi tải sản phẩm Flash Sale</div>';
+            }
+        }
+
+        function renderAvailableProducts() {
+            const container = document.getElementById('available-products');
+            const availableProducts = allProducts.filter(product => 
+                !flashSaleProducts.some(fsp => fsp.san_pham_id === product.san_pham_id)
+            );
+
+            if (availableProducts.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-4">Không có sản phẩm khả dụng</div>';
+                return;
+            }
+
+            container.innerHTML = availableProducts.map(product => `
+                <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                    <div class="flex-1">
+                        <h4 class="font-medium text-sm">${product.ten_san_pham}</h4>
+                        <p class="text-xs text-gray-500">${formatCurrency(product.gia_ban)}</p>
+                    </div>
+                    <button onclick="showAddProductModal(${product.san_pham_id})" 
+                            class="text-green-600 hover:text-green-800 text-sm">
+                        Thêm
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderFlashSaleProducts() {
+            const container = document.getElementById('flash-sale-products');
+
+            if (flashSaleProducts.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-4">Chưa có sản phẩm nào</div>';
+                return;
+            }
+
+            container.innerHTML = flashSaleProducts.map(product => `
+                <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                    <div class="flex-1">
+                        <h4 class="font-medium text-sm">${product.ten_san_pham}</h4>
+                        <p class="text-xs text-gray-500">
+                            Giá gốc: ${formatCurrency(product.gia_ban)} → 
+                            <span class="text-red-600 font-medium">Flash: ${formatCurrency(product.gia_flash_sale)}</span>
+                        </p>
+                        ${product.so_luong_gioi_han ? 
+                            `<p class="text-xs text-blue-600">Giới hạn: ${product.so_luong_gioi_han} sản phẩm</p>` : 
+                            '<p class="text-xs text-green-600">Không giới hạn</p>'
+                        }
+                    </div>
+                    <button onclick="removeProductFromFlashSale(${product.san_pham_id})" 
+                            class="text-red-600 hover:text-red-800 text-sm">
+                        Xóa
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function showAddProductModal(productId) {
+            const product = allProducts.find(p => p.san_pham_id === productId);
+            if (!product) return;
+
+            document.getElementById('selected-flash-sale-id').value = currentFlashSaleId;
+            document.getElementById('selected-product-id').value = productId;
+            document.getElementById('selected-product-info').innerHTML = `
+                <h4 class="font-medium">${product.ten_san_pham}</h4>
+                <p class="text-sm text-gray-600">Giá gốc: ${formatCurrency(product.gia_ban)}</p>
+            `;
+            
+            // Suggest 30% discount
+            const suggestedPrice = Math.round(product.gia_ban * 0.7 / 1000) * 1000;
+            document.getElementById('flash-sale-price').value = suggestedPrice;
+            
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        async function addProductToFlashSale(event) {
+            event.preventDefault();
+            
+            const data = {
+                san_pham_id: document.getElementById('selected-product-id').value,
+                gia_flash_sale: document.getElementById('flash-sale-price').value,
+                so_luong_gioi_han: document.getElementById('quantity-limit').value || null
+            };
+
+            try {
+                await apiCall(`/flash-sale/${currentFlashSaleId}/products`, 'POST', data, true);
+                alert('Thêm sản phẩm vào Flash Sale thành công!');
+                hideAddProductModal();
+                await loadFlashSaleProducts(currentFlashSaleId);
+                renderAvailableProducts();
+                loadFlashSales(); // Refresh main list
+            } catch (error) {
+                console.error('Error adding product to flash sale:', error);
+                alert('Có lỗi xảy ra: ' + (error.message || 'Vui lòng thử lại'));
+            }
+        }
+
+        async function removeProductFromFlashSale(productId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi Flash Sale?')) return;
+
+            try {
+                await apiCall(`/flash-sale/${currentFlashSaleId}/products/${productId}`, 'DELETE', null, true);
+                alert('Xóa sản phẩm khỏi Flash Sale thành công!');
+                await loadFlashSaleProducts(currentFlashSaleId);
+                renderAvailableProducts();
+                loadFlashSales(); // Refresh main list
+            } catch (error) {
+                console.error('Error removing product from flash sale:', error);
+                alert('Có lỗi xảy ra: ' + (error.message || 'Vui lòng thử lại'));
+            }
+        }
+
+        function hideProductsModal() {
+            document.getElementById('products-modal').classList.add('hidden');
+        }
+
+        function hideAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+            document.getElementById('add-product-form').reset();
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
     </script>
 </body>
 </html>

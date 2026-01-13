@@ -249,3 +249,23 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
   }
 };
+
+// Lấy tất cả sản phẩm cho admin (không phân trang)
+exports.getAllProducts = async (req, res) => {
+  try {
+    const query = `
+      SELECT sp.san_pham_id, sp.ten_san_pham, sp.gia_ban, sp.url_hinh_anh_chinh,
+             dm.ten_danh_muc, sp.trang_thai_hien_thi
+      FROM san_pham sp
+      LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.danh_muc_id
+      WHERE sp.trang_thai_hien_thi = 1
+      ORDER BY sp.ten_san_pham ASC
+    `;
+    
+    const [results] = await db.execute(query);
+    res.json({ success: true, data: results });
+  } catch (error) {
+    console.error('Error getting all products:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+  }
+};

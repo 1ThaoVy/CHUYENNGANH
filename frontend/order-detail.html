@@ -75,17 +75,30 @@
             document.getElementById('loading').classList.add('hidden');
             const container = document.getElementById('order-detail');
 
+            // Kiểm tra có thể hủy đơn hàng không
+            const canCancel = order.phuong_thuc_thanh_toan === 'COD' && order.trang_thai_don_hang_id === 1;
+
             container.innerHTML = `
                 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                     <div class="flex justify-between items-start mb-6">
                         <div>
                             <h1 class="text-3xl font-bold mb-2">Đơn hàng #${order.don_hang_id}</h1>
                             <p class="text-gray-600">Ngày đặt: ${formatDate(order.ngay_dat_hang)}</p>
+                            ${order.ngay_huy ? `<p class="text-red-600">Ngày hủy: ${formatDate(order.ngay_huy)}</p>` : ''}
+                            ${order.ly_do_huy ? `<p class="text-red-600">Lý do hủy: ${order.ly_do_huy}</p>` : ''}
                         </div>
-                        <span class="px-4 py-2 rounded-full font-semibold"
-                              style="background-color: ${order.ma_mau_sac}20; color: ${order.ma_mau_sac}">
-                            ${order.ten_trang_thai}
-                        </span>
+                        <div class="flex flex-col items-end gap-3">
+                            <span class="px-4 py-2 rounded-full font-semibold"
+                                  style="background-color: ${order.ma_mau_sac}20; color: ${order.ma_mau_sac}">
+                                ${order.ten_trang_thai}
+                            </span>
+                            ${canCancel ? `
+                                <button onclick="cancelOrder(${order.don_hang_id})" 
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                                    Hủy đơn hàng
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -108,7 +121,21 @@
                         <div id="products-list" class="space-y-4">
                             ${order.items.map(item => `
                                 <div class="flex gap-4 pb-4 border-b last:border-0" data-product-id="${item.san_pham_id}">
-                                    <div class="w-20 h-20 bg-gray-200 flex-shrink-0 rounded"></div>
+                                    <div class="w-20 h-20 bg-gray-200 flex-shrink-0 rounded overflow-hidden">
+                                        ${item.url_hinh_anh_chinh ? `
+                                            <img src="http://localhost:3001${item.url_hinh_anh_chinh}" 
+                                                 alt="${item.ten_san_pham}" 
+                                                 class="w-full h-full object-cover"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                            <div style="display:none" class="w-full h-full flex items-center justify-center">
+                                                <span class="text-gray-400 text-xs">Hình ảnh</span>
+                                            </div>
+                                        ` : `
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <span class="text-gray-400 text-xs">Hình ảnh</span>
+                                            </div>
+                                        `}
+                                    </div>
                                     <div class="flex-1">
                                         <h4 class="font-semibold mb-1">${item.ten_san_pham}</h4>
                                         <p class="text-sm text-gray-600">Số lượng: ${item.so_luong}</p>
@@ -314,6 +341,33 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadOrder);
+
+        // Hàm hủy đơn hàng
+        async function cancelOrder(orderId) {
+            const reason = prompt('Vui lòng nhập lý do hủy đơn hàng (tùy chọn):');
+            
+            // Nếu user nhấn Cancel thì không thực hiện
+            if (reason === null) return;
+            
+            if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+                return;
+            }
+
+            try {
+                const response = await apiCall(`/orders/${orderId}/cancel`, 'PUT', {
+                    ly_do_huy: reason || 'Khách hàng hủy đơn hàng'
+                }, true);
+
+                if (response.success) {
+                    alert('Hủy đơn hàng thành công!');
+                    location.reload(); // Reload trang để cập nhật trạng thái
+                } else {
+                    alert(response.message || 'Có lỗi xảy ra khi hủy đơn hàng');
+                }
+            } catch (error) {
+                alert(error.message || 'Có lỗi xảy ra khi hủy đơn hàng');
+            }
+        }
     </script>
 </body>
 </html>

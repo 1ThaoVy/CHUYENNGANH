@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProducts, getProduct, createProduct, updateProduct, deleteProduct } = require('../controllers/productController');
+const { getProducts, getProduct, createProduct, updateProduct, deleteProduct, getAllProducts } = require('../controllers/productController');
 const { protect, authorize, authenticateToken } = require('../middleware/auth');
 
 // Route GET có thể có hoặc không có token (optional auth)
@@ -20,6 +20,7 @@ router.get('/', (req, res, next) => {
 }, getProducts);
 
 router.get('/:id', getProduct);
+router.get('/admin/all', authenticateToken, authorize('admin'), getAllProducts);  // Route lấy tất cả sản phẩm cho admin
 router.post('/', protect, authorize('admin'), createProduct);
 router.put('/:id', protect, authorize('admin'), updateProduct);
 router.delete('/:id', protect, authorize('admin'), deleteProduct);
